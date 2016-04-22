@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="gKit2light" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<MakeCommands>
+			<Build command="$make -f $makefile" />
+			<CompileFile command="$make -f $makefile" />
+			<Clean command="$make -f $makefile clean" />
+			<DistClean command="$make -f $makefile clean" />
+			<AskRebuildNeeded command="$make -q -f $makefile $target" />
+			<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+		</MakeCommands>
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/gKit2light" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-lncurses -lSDL" />
+				</Linker>
+				<MakeCommands>
+					<Build command="$make -f $makefile" />
+					<CompileFile command="$make -f $makefile" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile clean" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="Makefile" />
+		<Unit filename="src/gKit/buffer.cpp" />
+		<Unit filename="src/gKit/buffer.h" />
+		<Unit filename="src/gKit/image.cpp" />
+		<Unit filename="src/gKit/image.h" />
+		<Unit filename="src/gKit/mat.cpp" />
+		<Unit filename="src/gKit/mat.h" />
+		<Unit filename="src/gKit/mesh.cpp" />
+		<Unit filename="src/gKit/mesh.h" />
+		<Unit filename="src/gKit/orbiter.cpp" />
+		<Unit filename="src/gKit/orbiter.h" />
+		<Unit filename="src/gKit/program.cpp" />
+		<Unit filename="src/gKit/program.h" />
+		<Unit filename="src/gKit/texture.cpp" />
+		<Unit filename="src/gKit/texture.h" />
+		<Unit filename="src/gKit/vec.cpp" />
+		<Unit filename="src/gKit/vec.h" />
+		<Unit filename="src/gKit/wavefront.cpp" />
+		<Unit filename="src/gKit/wavefront.h" />
+		<Unit filename="src/gKit/window.cpp" />
+		<Unit filename="src/gKit/window.h" />
+		<Unit filename="src/viewer/mini_gl3core.cpp" />
+		<Unit filename="tutos/gkit2.txt" />
+		<Unit filename="tutos/glsl.txt" />
+		<Unit filename="tutos/images/bigguy_notexture.png" />
+		<Unit filename="tutos/images/bigguy_texspace.png" />
+		<Unit filename="tutos/images/grid_edges.png" />
+		<Unit filename="tutos/images/grid_fragments.png" />
+		<Unit filename="tutos/images/grid_samples.png" />
+		<Unit filename="tutos/images/grid_triangle.png" />
+		<Unit filename="tutos/images/march_kit.png" />
+		<Unit filename="tutos/images/mesh.png" />
+		<Unit filename="tutos/images/mesh_kit.png" />
+		<Unit filename="tutos/images/mesh_uvgrid.png" />
+		<Unit filename="tutos/images/opengl_pipeline.png" />
+		<Unit filename="tutos/images/shader2_pipeline.png" />
+		<Unit filename="tutos/images/shader_pipeline.png" />
+		<Unit filename="tutos/images/trace_kit.png" />
+		<Unit filename="tutos/interface.txt" />
+		<Unit filename="tutos/intro.txt" />
+		<Unit filename="tutos/intro1.glsl" />
+		<Unit filename="tutos/pipeline.cpp" />
+		<Unit filename="tutos/pipeline3d.cpp" />
+		<Unit filename="tutos/pipeline_c.txt" />
+		<Unit filename="tutos/scene_tuto1.cpp" />
+		<Unit filename="tutos/shader_reflect.txt" />
+		<Unit filename="tutos/solar_system_base.cpp" />
+		<Unit filename="tutos/tuto1.cpp" />
+		<Unit filename="tutos/tuto1.txt" />
+		<Unit filename="tutos/tuto2.cpp" />
+		<Unit filename="tutos/tuto2GL.cpp" />
+		<Unit filename="tutos/tuto2GL.txt" />
+		<Unit filename="tutos/tuto2GL_fragment.glsl" />
+		<Unit filename="tutos/tuto2GL_vertex.glsl" />
+		<Unit filename="tutos/tuto3.cpp" />
+		<Unit filename="tutos/tuto3GL.cpp" />
+		<Unit filename="tutos/tuto3GL.glsl" />
+		<Unit filename="tutos/tuto3GL.txt" />
+		<Unit filename="tutos/tuto3GL_reflect.cpp" />
+		<Unit filename="tutos/tuto4.cpp" />
+		<Unit filename="tutos/tuto4GL.cpp" />
+		<Unit filename="tutos/tuto4GL.glsl" />
+		<Unit filename="tutos/tuto4GL.txt" />
+		<Unit filename="tutos/tuto4GL_normals.cpp" />
+		<Unit filename="tutos/tuto4GL_normals.glsl" />
+		<Unit filename="tutos/tuto5.cpp" />
+		<Unit filename="tutos/tuto5GL.cpp" />
+		<Unit filename="tutos/tuto5GL.glsl" />
+		<Unit filename="tutos/tuto5GL.txt" />
+		<Unit filename="tutos/tuto5GL_multi.cpp" />
+		<Unit filename="tutos/tuto5GL_multi.glsl" />
+		<Unit filename="tutos/tuto5GL_sampler.cpp" />
+		<Unit filename="tutos/tuto5GL_samplers.cpp" />
+		<Unit filename="tutos/tuto6.cpp" />
+		<Unit filename="tutos/tutoGL2.txt" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
