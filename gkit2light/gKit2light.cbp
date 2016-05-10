@@ -6,6 +6,7 @@
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="src/;" />
 		<MakeCommands>
 			<Build command="$make -f $makefile" />
 			<CompileFile command="$make -f $makefile" />
@@ -22,6 +23,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-lncurses -lSDL" />
@@ -40,6 +42,12 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="Makefile" />
+		<Unit filename="include/membre.h">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/avant_bras.obj" />
+		<Unit filename="src/boule.obj" />
+		<Unit filename="src/cuisse.obj" />
 		<Unit filename="src/gKit/buffer.cpp" />
 		<Unit filename="src/gKit/buffer.h" />
 		<Unit filename="src/gKit/image.cpp" />
@@ -60,6 +68,8 @@
 		<Unit filename="src/gKit/wavefront.h" />
 		<Unit filename="src/gKit/window.cpp" />
 		<Unit filename="src/gKit/window.h" />
+		<Unit filename="src/membre.cpp" />
+		<Unit filename="src/pied.obj" />
 		<Unit filename="src/viewer/mini_gl3core.cpp" />
 		<Unit filename="tutos/gkit2.txt" />
 		<Unit filename="tutos/glsl.txt" />

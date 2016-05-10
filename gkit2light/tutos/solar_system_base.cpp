@@ -9,12 +9,14 @@
 
 #include "wavefront.h"
 #include "draw.h"
-
-
+#include "membre.h"
+#include <math.h>
+#include <iostream>
 Orbiter camera;
 
 Mesh grid;
-
+membre* robo;
+membre* boule;
 // utilitaire. creation d'une grille / repere.
 Mesh make_grid( int size )
 {
@@ -45,6 +47,15 @@ int init( )
     camera= make_orbiter();
     grid = make_grid(50);
     grid.color = make_black() ;
+    std::cout << "Test Constructor" << std::endl;
+    robo = new membre();
+    boule = new membre();
+    std::cout << "Test Read" << std::endl;
+    *robo->obj = read_mesh("data/tete.obj");
+    *boule->obj = read_mesh("data/boule.obj");
+    robo->fils = boule;
+    boule->fils = NULL;
+    //mesh_normalize(*robo);
 
     // etat par defaut
     glClearColor(0.2, 0.2, 0.2, 1);           // couleur par defaut de la fenetre
@@ -84,7 +95,20 @@ int draw( )
 
     // affiche la grille / repere
     draw(grid, camera);
+    //membre* it = robo;
+    //int i = 0;
+    //std::cout << "Test Draw" << std::endl;
+    //while(it != NULL)
+    //{
+        //draw(*robo->obj, camera);
+        draw(*(robo->fils)->obj, camera);
+        //it = robo->fils;
+       // i++;
+       // std::cout << "Test"  << i << std::endl;
 
+    //}
+
+    //sphere.draw(0, 0, -5);
     return 1;   // on continue, renvoyer 0 pour sortir de l'application
 }
 
