@@ -5,7 +5,7 @@ membre::membre()
   this->obj = new Mesh();
   this->fils = NULL;
   x = 0;  y = 0;  z = 0;
-  scaleX = 0;  scaleY = 0;  scaleZ = 0;
+  scaleX = 1;  scaleY = 1;  scaleZ = 1;
   rotX = 0; rotY = 0; rotZ = 0;
 }
 

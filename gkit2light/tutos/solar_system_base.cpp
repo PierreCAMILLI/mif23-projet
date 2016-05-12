@@ -158,31 +158,39 @@ int init( )
 
     std::cout << "Test Translate" << std::endl;
     // Partie tete
-    tete->translate(0, 3.28, 0.1);
-    boule1->translate(0, 3.28, 0.1);
+    tete->translate(0.1, 3.28, 0);
+    boule1->translate(0.1, 3.28, 0);
     torse->translate(0, 0, 0);
     // Partie main gauche
-    main1->translate(3.66, 2.66, 0.1);
-    poignet1->translate(3.5, 2.66, 0.1);
-    avantbras1->translate(2.25, 2.66, 0.1);
-    bras1->translate(1, 2.66, 0.1);
-    boule2->translate(1, 2.66, 0.1);
+    main1->translate(0.1, 2.66, 3.66);
+    poignet1->translate(0.1, 2.66, 3.5);
+    avantbras1->translate(0.1, 2.66, 2.25);
+    bras1->translate(0.1, 2.66, 1);
+    boule2->translate(0.1, 2.66, 1);
+
     // Partie main droite
-    main2->translate(-3.66, 2.66, 0.1);
-    poignet2->translate(-3.5, 2.66, 0.1);
-    avantbras2->translate(-2.25, 2.66, 0.1);
-    bras2->translate(-1, 2.66, 0.1);
-    boule3->translate(-1, 2.66, 0.1);
+    main2->translate(0.1, 2.66, -3.66);
+    main2->rotateX(180);
+    poignet2->translate(0.1, 2.66, -3.5);
+    poignet2->rotateX(180);
+    avantbras2->translate(0.1, 2.66, -2.25);
+    avantbras2->rotateX(180);
+    bras2->translate(0.1, 2.66, -1);
+    bras2->rotateX(180);
+    boule3->translate(0.1, 2.66, -1);
+
     // Partie pied gauche
-    pied1->translate(-2.9, 0.6, 0);
-    tibia1->translate(-1.53, 0.6, 0);
-    cuisse1->translate(0, 0.6, 0);
-    boule4->translate(0, 0.6, 0);
+    pied1->translate(0, -2.9, 0.6);
+    tibia1->translate(0, -1.53, 0.6);
+    cuisse1->translate(0, 0, 0.6);
+    boule4->translate(0, 0, 0.6);
+    boule4->rescale(1.5, 1.5, 1.5);
     // Partie pied droit
-    pied2->translate(-0.6, -2.9, 0);
-    tibia2->translate(-0.6, -1.53, 0);
-    cuisse2->translate(-0.6, 0, 0);
-    boule5->translate(-0.6, 0, 0);
+    pied2->translate(0, -2.9, -0.6);
+    tibia2->translate(0, -1.53, -0.6);
+    cuisse2->translate(0, 0, -0.6);
+    boule5->translate(0, 0, -0.6);
+    boule5->rescale(1.5, 1.5, 1.5);
     //mesh_normalize(*robo);
 
     // etat par defaut
@@ -230,23 +238,23 @@ int draw( )
     //{
         //draw(*robo->obj, camera);
     for(membre* memb = tete; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTranslation();
+        Transform trans = memb->getTransformation();
         draw(*memb->obj, trans, camera);
     }
     for(membre* memb = main1; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTranslation();
+        Transform trans = memb->getTransformation();
         draw(*memb->obj, trans, camera);
     }
     for(membre* memb = main2; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTranslation();
+        Transform trans = memb->getTransformation();
         draw(*memb->obj, trans, camera);
     }
     for(membre* memb = pied1; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTranslation();
+        Transform trans = memb->getTransformation();
         draw(*memb->obj, trans, camera);
     }
     for(membre* memb = pied2; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTranslation();
+        Transform trans = memb->getTransformation();
         draw(*memb->obj, trans, camera);
     }
         //it = robo->fils;
