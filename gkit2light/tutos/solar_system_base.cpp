@@ -15,8 +15,32 @@
 Orbiter camera;
 
 Mesh grid;
-membre* robo;
-membre* boule;
+
+membre* tete;
+membre* boule1;
+membre* torse;
+
+membre* main1;
+membre* poignet1;
+membre* avantbras1;
+membre* bras1;
+membre* boule2;
+
+membre* main2;
+membre* poignet2;
+membre* avantbras2;
+membre* bras2;
+membre* boule3;
+
+membre* pied1;
+membre* tibia1;
+membre* cuisse1;
+membre* boule4;
+
+membre* pied2;
+membre* tibia2;
+membre* cuisse2;
+membre* boule5;
 // utilitaire. creation d'une grille / repere.
 Mesh make_grid( int size )
 {
@@ -47,14 +71,118 @@ int init( )
     camera= make_orbiter();
     grid = make_grid(50);
     grid.color = make_black() ;
+
     std::cout << "Test Constructor" << std::endl;
-    robo = new membre();
-    boule = new membre();
+    // Partie tete
+    tete = new membre();
+    boule1 = new membre();
+    torse = new membre();
+    // Partie main gauche
+    main1 = new membre();
+    poignet1 = new membre();
+    avantbras1 = new membre();
+    bras1 = new membre();
+    boule2 = new membre();
+    // Partie main droite
+    main2 = new membre();
+    poignet2 = new membre();
+    avantbras2 = new membre();
+    bras2 = new membre();
+    boule3 = new membre();
+    // Partie pied gauche
+    pied1 = new membre();
+    tibia1 = new membre();
+    cuisse1 = new membre();
+    boule4 = new membre();
+    // Partie pied droit
+    pied2 = new membre();
+    tibia2 = new membre();
+    cuisse2 = new membre();
+    boule5 = new membre();
+
     std::cout << "Test Read" << std::endl;
-    *robo->obj = read_mesh("data/tete.obj");
-    *boule->obj = read_mesh("data/boule.obj");
-    robo->fils = boule;
-    boule->fils = NULL;
+    // Partie tete
+    *tete->obj = read_mesh("data/tete.obj");
+    *boule1->obj = read_mesh("data/boule.obj");
+    *torse->obj = read_mesh("data/torse.obj");
+    // Partie main gauche
+    *main1->obj = read_mesh("data/main.obj");
+    *poignet1->obj = read_mesh("data/poignet.obj");
+    *avantbras1->obj = read_mesh("data/avant_bras.obj");
+    *bras1->obj = read_mesh("data/bras.obj");
+    *boule2->obj = read_mesh("data/boule.obj");
+    // Partie main droite
+    *main2->obj = read_mesh("data/main.obj");
+    *poignet2->obj = read_mesh("data/poignet.obj");
+    *avantbras2->obj = read_mesh("data/avant_bras.obj");
+    *bras2->obj = read_mesh("data/bras.obj");
+    *boule3->obj = read_mesh("data/boule.obj");
+    // Partie pied gauche
+    *pied1->obj = read_mesh("data/pied.obj");
+    *tibia1->obj = read_mesh("data/tibia.obj");
+    *cuisse1->obj = read_mesh("data/cuisse.obj");
+    *boule4->obj = read_mesh("data/boule.obj");
+    // Partie pied droit
+    *pied2->obj = read_mesh("data/pied.obj");
+    *tibia2->obj = read_mesh("data/tibia.obj");
+    *cuisse2->obj = read_mesh("data/cuisse.obj");
+    *boule5->obj = read_mesh("data/boule.obj");
+
+    std::cout << "Test Linking Members" << std::endl;
+    // Partie tete
+    tete->fils = boule1;
+    boule1->fils = torse;
+    torse->fils = NULL;
+    // Partie main gauche
+    main1->fils = poignet1;
+    poignet1->fils = avantbras1;
+    avantbras1->fils = bras1;
+    bras1->fils = boule2;
+    boule2->fils = torse;
+    // Partie main droite
+    main2->fils = poignet2;
+    poignet2->fils = avantbras2;
+    avantbras2->fils = bras2;
+    bras2->fils = boule3;
+    boule3->fils = torse;
+    // Partie pied gauche
+    pied1->fils = tibia1;
+    tibia1->fils = cuisse1;
+    cuisse1->fils = boule4;
+    boule4->fils = torse;
+    // Partie pied droit
+    pied2->fils = tibia2;
+    tibia2->fils = cuisse2;
+    cuisse2->fils = boule5;
+    boule5->fils = torse;
+
+    std::cout << "Test Translate" << std::endl;
+    // Partie tete
+    tete->translate(0, 3.28, 0.1);
+    boule1->translate(0, 3.28, 0.1);
+    torse->translate(0, 0, 0);
+    // Partie main gauche
+    main1->translate(3.66, 2.66, 0.1);
+    poignet1->translate(3.5, 2.66, 0.1);
+    avantbras1->translate(2.25, 2.66, 0.1);
+    bras1->translate(1, 2.66, 0.1);
+    boule2->translate(1, 2.66, 0.1);
+    // Partie main droite
+    main2->translate(-3.66, 2.66, 0.1);
+    poignet2->translate(-3.5, 2.66, 0.1);
+    avantbras2->translate(-2.25, 2.66, 0.1);
+    bras2->translate(-1, 2.66, 0.1);
+    boule3->translate(-1, 2.66, 0.1);
+    // Partie pied gauche
+    pied1->translate(-2.9, 0.6, 0);
+    tibia1->translate(-1.53, 0.6, 0);
+    cuisse1->translate(0, 0.6, 0);
+    boule4->translate(0, 0.6, 0);
+    // Partie pied droit
+    pied2->translate(-0.6, -2.9, 0);
+    tibia2->translate(-0.6, -1.53, 0);
+    cuisse2->translate(-0.6, 0, 0);
+    boule5->translate(-0.6, 0, 0);
     //mesh_normalize(*robo);
 
     // etat par defaut
@@ -101,7 +229,26 @@ int draw( )
     //while(it != NULL)
     //{
         //draw(*robo->obj, camera);
-        draw(*(robo->fils)->obj, camera);
+    for(membre* memb = tete; memb != NULL; memb = memb->fils){
+        Transform trans = memb->getTranslation();
+        draw(*memb->obj, trans, camera);
+    }
+    for(membre* memb = main1; memb != NULL; memb = memb->fils){
+        Transform trans = memb->getTranslation();
+        draw(*memb->obj, trans, camera);
+    }
+    for(membre* memb = main2; memb != NULL; memb = memb->fils){
+        Transform trans = memb->getTranslation();
+        draw(*memb->obj, trans, camera);
+    }
+    for(membre* memb = pied1; memb != NULL; memb = memb->fils){
+        Transform trans = memb->getTranslation();
+        draw(*memb->obj, trans, camera);
+    }
+    for(membre* memb = pied2; memb != NULL; memb = memb->fils){
+        Transform trans = memb->getTranslation();
+        draw(*memb->obj, trans, camera);
+    }
         //it = robo->fils;
        // i++;
        // std::cout << "Test"  << i << std::endl;
