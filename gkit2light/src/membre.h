@@ -8,7 +8,7 @@ class membre
     // Attributs
     Mesh* obj;
 
-    membre* fils;
+    membre* parent;
 
     float x, y, z, scaleX, scaleY, scaleZ, rotX, rotY, rotZ;
 

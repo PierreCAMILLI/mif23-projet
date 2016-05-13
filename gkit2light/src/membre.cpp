@@ -2,11 +2,11 @@
 
 membre::membre()
 {
-  this->obj = new Mesh();
-  this->fils = NULL;
-  x = 0;  y = 0;  z = 0;
-  scaleX = 1;  scaleY = 1;  scaleZ = 1;
-  rotX = 0; rotY = 0; rotZ = 0;
+    this->obj = new Mesh();
+    this->parent = NULL;
+    x = 0;  y = 0;  z = 0;
+    scaleX = 1;  scaleY = 1;  scaleZ = 1;
+    rotX = 0; rotY = 0; rotZ = 0;
 }
 
 void membre::translate(float x, float y, float z)
@@ -83,5 +83,5 @@ Transform membre::getTransformation()
 membre::~membre()
 {
   delete[] this->obj;
-  delete[] this->fils;
+  delete[] this->parent;
 }

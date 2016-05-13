@@ -130,31 +130,31 @@ int init( )
 
     std::cout << "Test Linking Members" << std::endl;
     // Partie tete
-    tete->fils = boule1;
-    boule1->fils = torse;
-    torse->fils = NULL;
+    tete->parent = boule1;
+    boule1->parent = torse;
+    torse->parent = NULL;
     // Partie main gauche
-    main1->fils = poignet1;
-    poignet1->fils = avantbras1;
-    avantbras1->fils = bras1;
-    bras1->fils = boule2;
-    boule2->fils = torse;
+    main1->parent = poignet1;
+    poignet1->parent = avantbras1;
+    avantbras1->parent = bras1;
+    bras1->parent = boule2;
+    boule2->parent = torse;
     // Partie main droite
-    main2->fils = poignet2;
-    poignet2->fils = avantbras2;
-    avantbras2->fils = bras2;
-    bras2->fils = boule3;
-    boule3->fils = torse;
+    main2->parent = poignet2;
+    poignet2->parent = avantbras2;
+    avantbras2->parent = bras2;
+    bras2->parent = boule3;
+    boule3->parent = torse;
     // Partie pied gauche
-    pied1->fils = tibia1;
-    tibia1->fils = cuisse1;
-    cuisse1->fils = boule4;
-    boule4->fils = torse;
+    pied1->parent = tibia1;
+    tibia1->parent = cuisse1;
+    cuisse1->parent = boule4;
+    boule4->parent = torse;
     // Partie pied droit
-    pied2->fils = tibia2;
-    tibia2->fils = cuisse2;
-    cuisse2->fils = boule5;
-    boule5->fils = torse;
+    pied2->parent = tibia2;
+    tibia2->parent = cuisse2;
+    cuisse2->parent = boule5;
+    boule5->parent = torse;
 
     std::cout << "Test Translate" << std::endl;
     // Partie tete
@@ -231,39 +231,21 @@ int draw( )
 
     // affiche la grille / repere
     draw(grid, camera);
-    //membre* it = robo;
-    //int i = 0;
-    //std::cout << "Test Draw" << std::endl;
-    //while(it != NULL)
-    //{
-        //draw(*robo->obj, camera);
-    for(membre* memb = tete; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTransformation();
-        draw(*memb->obj, trans, camera);
+    for(membre* memb = tete; memb != NULL; memb = memb->parent){
+        draw(*memb->obj, memb->getTransformation(), camera);
     }
-    for(membre* memb = main1; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTransformation();
-        draw(*memb->obj, trans, camera);
+    for(membre* memb = main1; memb != NULL; memb = memb->parent){
+        draw(*memb->obj, memb->getTransformation(), camera);
     }
-    for(membre* memb = main2; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTransformation();
-        draw(*memb->obj, trans, camera);
+    for(membre* memb = main2; memb != NULL; memb = memb->parent){
+        draw(*memb->obj, memb->getTransformation(), camera);
     }
-    for(membre* memb = pied1; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTransformation();
-        draw(*memb->obj, trans, camera);
+    for(membre* memb = pied1; memb != NULL; memb = memb->parent){
+        draw(*memb->obj, memb->getTransformation(), camera);
     }
-    for(membre* memb = pied2; memb != NULL; memb = memb->fils){
-        Transform trans = memb->getTransformation();
-        draw(*memb->obj, trans, camera);
+    for(membre* memb = pied2; memb != NULL; memb = memb->parent){
+        draw(*memb->obj, memb->getTransformation(), camera);
     }
-        //it = robo->fils;
-       // i++;
-       // std::cout << "Test"  << i << std::endl;
-
-    //}
-
-    //sphere.draw(0, 0, -5);
     return 1;   // on continue, renvoyer 0 pour sortir de l'application
 }
 
