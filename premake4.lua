@@ -68,6 +68,7 @@ end
 
  -- description des tutos
 local tutos = {
+	"solar_system_base",
 	"tuto1",
 	"tuto2",
 	"tuto3",

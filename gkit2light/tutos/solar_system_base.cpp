@@ -41,6 +41,16 @@ membre* pied2;
 membre* tibia2;
 membre* cuisse2;
 membre* boule5;
+
+int prog;
+
+void drawMembre( membre * m){
+    if(m->parent != NULL){
+        drawMembre(m->parent);
+    }
+    draw(*m->obj, m->getTransformation(), camera);
+}
+
 // utilitaire. creation d'une grille / repere.
 Mesh make_grid( int size )
 {
@@ -71,6 +81,8 @@ int init( )
     camera= make_orbiter();
     grid = make_grid(50);
     grid.color = make_black() ;
+
+    prog = 0;
 
     std::cout << "Test Constructor" << std::endl;
     // Partie tete
@@ -145,6 +157,7 @@ int init( )
     avantbras2->parent = bras2;
     bras2->parent = boule3;
     boule3->parent = torse;
+    boule3->rotateX(180);
     // Partie pied gauche
     pied1->parent = tibia1;
     tibia1->parent = cuisse1;
@@ -158,38 +171,29 @@ int init( )
 
     std::cout << "Test Translate" << std::endl;
     // Partie tete
-    tete->translate(0.1, 3.28, 0);
     boule1->translate(0.1, 3.28, 0);
-    torse->translate(0, 0, 0);
     // Partie main gauche
-    main1->translate(0.1, 2.66, 3.66);
-    poignet1->translate(0.1, 2.66, 3.5);
-    avantbras1->translate(0.1, 2.66, 2.25);
-    bras1->translate(0.1, 2.66, 1);
-    boule2->translate(0.1, 2.66, 1);
+    main1->translate(0, 0, 0.11);
+    poignet1->translate(0, 0, 1.25);
+    avantbras1->translate(0, 0, 1.25);
+    boule2->setOffset(0.1, 2.66, 1);
 
     // Partie main droite
-    main2->translate(0.1, 2.66, -3.66);
-    main2->rotateX(180);
-    poignet2->translate(0.1, 2.66, -3.5);
-    poignet2->rotateX(180);
-    avantbras2->translate(0.1, 2.66, -2.25);
-    avantbras2->rotateX(180);
-    bras2->translate(0.1, 2.66, -1);
-    bras2->rotateX(180);
-    boule3->translate(0.1, 2.66, -1);
+    main2->translate(0, 0, 0.11);
+    poignet2->translate(0, 0, 1.25);
+    avantbras2->translate(0, 0, 1.25);
+    boule3->setOffset(0.1, 2.66, -1);
+    boule3->rotateY(180);
 
     // Partie pied gauche
-    pied1->translate(0, -2.9, 0.6);
-    tibia1->translate(0, -1.53, 0.6);
-    cuisse1->translate(0, 0, 0.6);
-    boule4->translate(0, 0, 0.6);
+    pied1->translate(0, -1.37, 0);
+    tibia1->translate(0, -1.53, 0);
+    boule4->setOffset(0, 0, 0.6);
     boule4->rescale(1.5, 1.5, 1.5);
     // Partie pied droit
-    pied2->translate(0, -2.9, -0.6);
-    tibia2->translate(0, -1.53, -0.6);
-    cuisse2->translate(0, 0, -0.6);
-    boule5->translate(0, 0, -0.6);
+    pied2->translate(0, -1.37, 0);
+    tibia2->translate(0, -1.53, 0);
+    boule5->setOffset(0, 0, -0.6);
     boule5->rescale(1.5, 1.5, 1.5);
     //mesh_normalize(*robo);
 
@@ -228,24 +232,24 @@ int draw( )
     else if(mb & SDL_BUTTON(2))         // le bouton du milieu est enfonce
         // deplace le point de rotation
         orbiter_translation(camera, (float) mx / (float) window_width(), (float) my / (float) window_height());
+    if(key_state('a'))
+        prog++;
+    if(key_state('z'))
+        prog--;
+
+    //boule2->rotateY(prog);
+    boule2->rotateXYZ(75,0,0);
+    boule3->rotateXYZ(-75, prog, prog+45);
+    //boule4->rotateY(prog);
+    //boule5->rotateY(-prog);
 
     // affiche la grille / repere
-    draw(grid, camera);
-    for(membre* memb = tete; memb != NULL; memb = memb->parent){
-        draw(*memb->obj, memb->getTransformation(), camera);
-    }
-    for(membre* memb = main1; memb != NULL; memb = memb->parent){
-        draw(*memb->obj, memb->getTransformation(), camera);
-    }
-    for(membre* memb = main2; memb != NULL; memb = memb->parent){
-        draw(*memb->obj, memb->getTransformation(), camera);
-    }
-    for(membre* memb = pied1; memb != NULL; memb = memb->parent){
-        draw(*memb->obj, memb->getTransformation(), camera);
-    }
-    for(membre* memb = pied2; memb != NULL; memb = memb->parent){
-        draw(*memb->obj, memb->getTransformation(), camera);
-    }
+    //draw(grid, camera);
+    drawMembre(tete);
+    drawMembre(main1);
+    drawMembre(main2);
+    drawMembre(pied1);
+    drawMembre(pied2);
     return 1;   // on continue, renvoyer 0 pour sortir de l'application
 }
 
