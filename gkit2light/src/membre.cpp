@@ -39,7 +39,8 @@ Transform membre::getParentsTranslation()
 
 Transform membre::getTranslation()
 {
-    return make_translation(getParentsX(), getParentsY(), getParentsZ());
+    //return make_translation(getParentsX(), getParentsY(), getParentsZ());
+    return make_translation(pos.x, pos.y, pos.z);
 }
 
 float membre::getParentsOffsetX()
@@ -91,7 +92,8 @@ float membre::getParentsRotationX()
 
 Transform membre::getRotationX()
 {
-    return make_rotationX(getParentsRotationX());
+    //return make_rotationX(getParentsRotationX());
+    return make_rotationX(rot.x);
 }
 
 void membre::rotateY(float angle)
@@ -106,7 +108,8 @@ float membre::getParentsRotationY()
 
 Transform membre::getRotationY()
 {
-    return make_rotationY(getParentsRotationY());
+    //return make_rotationY(getParentsRotationY());
+    return make_rotationY(rot.y);
 }
 
 void membre::rotateZ(float angle)
@@ -121,7 +124,8 @@ float membre::getParentsRotationZ()
 
 Transform membre::getRotationZ()
 {
-    return make_rotationZ(getParentsRotationZ());
+    //return make_rotationZ(getParentsRotationZ());
+    return make_rotationZ(rot.z);
 }
 
 void membre::rotateXYZ(float angleX, float angleY, float angleZ)
@@ -138,7 +142,7 @@ Transform membre::getRotation()
 
 Transform membre::getTransformation()
 {
-    return getOffset() * getRotation() * getTranslation() * getScale();
+    return (this->parent != NULL ? this->parent->getTransformation() : make_identity()) * getTranslation() * getRotation();
     //return (this->parent != NULL ? getParentsTranslation() : make_identity()) * getRotation() * getTranslation() * getScale();
 }
 

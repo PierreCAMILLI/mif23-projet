@@ -44,11 +44,13 @@ membre* boule5;
 
 int prog;
 
+int * poses;
+
 void drawMembre( membre * m){
     if(m->parent != NULL){
         drawMembre(m->parent);
     }
-    draw(*m->obj, m->getTransformation(), camera);
+    draw(*m->obj, m->getTransformation() * m->getScale(), camera);
 }
 
 // utilitaire. creation d'une grille / repere.
@@ -157,7 +159,6 @@ int init( )
     avantbras2->parent = bras2;
     bras2->parent = boule3;
     boule3->parent = torse;
-    boule3->rotateX(180);
     // Partie pied gauche
     pied1->parent = tibia1;
     tibia1->parent = cuisse1;
@@ -176,26 +177,31 @@ int init( )
     main1->translate(0, 0, 0.11);
     poignet1->translate(0, 0, 1.25);
     avantbras1->translate(0, 0, 1.25);
-    boule2->setOffset(0.1, 2.66, 1);
+    boule2->translate(0.1, 2.66, 1);
 
     // Partie main droite
     main2->translate(0, 0, 0.11);
     poignet2->translate(0, 0, 1.25);
     avantbras2->translate(0, 0, 1.25);
-    boule3->setOffset(0.1, 2.66, -1);
+    boule3->translate(0.1, 2.66, -1);
     boule3->rotateY(180);
 
     // Partie pied gauche
     pied1->translate(0, -1.37, 0);
     tibia1->translate(0, -1.53, 0);
-    boule4->setOffset(0, 0, 0.6);
+    boule4->translate(0, 0, 0.6);
     boule4->rescale(1.5, 1.5, 1.5);
     // Partie pied droit
     pied2->translate(0, -1.37, 0);
     tibia2->translate(0, -1.53, 0);
-    boule5->setOffset(0, 0, -0.6);
+    boule5->translate(0, 0, -0.6);
     boule5->rescale(1.5, 1.5, 1.5);
     //mesh_normalize(*robo);
+
+    poses = new int[21];
+    for(unsigned int i = 0; i < 21; i++){
+        poses[i] = 0;
+    }
 
     // etat par defaut
     glClearColor(0.2, 0.2, 0.2, 1);           // couleur par defaut de la fenetre
@@ -236,13 +242,37 @@ int draw( )
         prog++;
     if(key_state('z'))
         prog--;
+    if(key_state('w')){
+        prog = 0;
+    }
 
-    boule2->rotateY(prog);
-    boule2->rotateXYZ(75,0,0);
-    boule3->rotateXYZ(-75, prog, prog+45);
-    //boule4->rotateZ(-prog);
-    //boule5->rotateZ(-prog);
-    //torse->rotateZ(prog);
+    tete->rotateY(poses[0]);
+    boule1->rotateY(poses[1]);
+
+    boule2->rotateY(prog+poses[2]);
+    bras1->rotateY(prog+poses[3]);
+    avantbras1->rotateY(prog+poses[4]);
+    poignet1->rotateY(prog+poses[5]);
+    main1->rotateY(poses[6]);
+
+    boule3->rotateY(90-prog+poses[7]);
+    bras2->rotateY(90-prog+poses[8]);
+    avantbras2->rotateY(-prog+poses[9]);
+    poignet2->rotateY(-prog+poses[10]);
+    main2->rotateY(poses[11]);
+    //boule2->rotateXYZ(75,0,0);
+    //boule3->rotateXYZ(-75, prog, prog+45);
+    pied1->rotateZ(prog+poses[12]);
+    tibia1->rotateZ(poses[13]);
+    cuisse1->rotateZ(poses[14]);
+    boule4->rotateZ(poses[15]);
+
+    pied2->rotateZ(poses[16]);
+    tibia2->rotateZ(-prog+poses[17]);
+    cuisse2->rotateZ(poses[18]);
+    boule5->rotateZ(-prog+poses[19]);
+
+    torse->rotateZ(prog+poses[20]);
 
     // affiche la grille / repere
     //draw(grid, camera);
