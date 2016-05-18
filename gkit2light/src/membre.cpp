@@ -4,38 +4,37 @@ membre::membre()
 {
     this->obj = new Mesh();
     this->parent = NULL;
-    x = 0;  y = 0;  z = 0;
-    offsetX = 0; offsetY = 0; offsetZ = 0;
-    scaleX = 1;  scaleY = 1;  scaleZ = 1;
-    rotX = 0; rotY = 0; rotZ = 0;
-    angle = 0;
+    pos.x = 0;  pos.y = 0;  pos.z = 0;
+    offset.x = 0; offset.y = 0; offset.z = 0;
+    scale.x = 1;  scale.y = 1;  scale.z = 1;
+    rot.x = 0; rot.y = 0; rot.z = 0;
 }
 
 void membre::translate(float x, float y, float z)
 {
-    this->x += x;
-    this->y += y;
-    this->z += z;
+    this->pos.x = x;
+    this->pos.y = y;
+    this->pos.z = z;
 }
 
 float membre::getParentsX()
 {
-    return this->x + (this->parent != NULL ? this->parent->getParentsX() : 0);
+    return this->pos.x + (this->parent != NULL ? this->parent->getParentsX() : 0);
 }
 
 float membre::getParentsY()
 {
-    return this->y + (this->parent != NULL ? this->parent->getParentsY() : 0);
+    return this->pos.y + (this->parent != NULL ? this->parent->getParentsY() : 0);
 }
 
 float membre::getParentsZ()
 {
-    return this->z + (this->parent != NULL ? this->parent->getParentsZ() : 0);
+    return this->pos.z + (this->parent != NULL ? this->parent->getParentsZ() : 0);
 }
 
 Transform membre::getParentsTranslation()
 {
-    return make_translation(getParentsX()-x, getParentsY()-y, getParentsZ()-z);
+    return make_translation(getParentsX()-pos.x, getParentsY()-pos.y, getParentsZ()-pos.z);
 }
 
 Transform membre::getTranslation()
@@ -45,23 +44,23 @@ Transform membre::getTranslation()
 
 float membre::getParentsOffsetX()
 {
-    return this->offsetX + (this->parent != NULL ? this->parent->getParentsOffsetX() : 0);
+    return this->offset.x + (this->parent != NULL ? this->parent->getParentsOffsetX() : 0);
 }
 
 float membre::getParentsOffsetY()
 {
-    return this->offsetY + (this->parent != NULL ? this->parent->getParentsOffsetY() : 0);
+    return this->offset.y + (this->parent != NULL ? this->parent->getParentsOffsetY() : 0);
 }
 
 float membre::getParentsOffsetZ()
 {
-    return this->offsetZ + (this->parent != NULL ? this->parent->getParentsOffsetZ() : 0);
+    return this->offset.z + (this->parent != NULL ? this->parent->getParentsOffsetZ() : 0);
 }
 
 void membre::setOffset(float x, float y, float z){
-    this->offsetX += x;
-    this->offsetY += y;
-    this->offsetZ += z;
+    this->offset.x += x;
+    this->offset.y += y;
+    this->offset.z += z;
 }
 
 Transform membre::getOffset(){
@@ -70,24 +69,24 @@ Transform membre::getOffset(){
 
 void membre::rescale(float x, float y, float z)
 {
-    this->scaleX = x;
-    this->scaleY = y;
-    this->scaleZ = z;
+    this->scale.x = x;
+    this->scale.y = y;
+    this->scale.z = z;
 }
 
 Transform membre::getScale()
 {
-    return make_scale(scaleX, scaleY, scaleZ);
+    return make_scale(scale.x, scale.y, scale.z);
 }
 
 void membre::rotateX(float angle)
 {
-    this->rotX = angle;
+    this->rot.x = angle;
 }
 
 float membre::getParentsRotationX()
 {
-    return this->rotX + (this->parent != NULL ? this->parent->getParentsRotationX() : 0);
+    return this->rot.x + (this->parent != NULL ? this->parent->getParentsRotationX() : 0);
 }
 
 Transform membre::getRotationX()
@@ -97,12 +96,12 @@ Transform membre::getRotationX()
 
 void membre::rotateY(float angle)
 {
-    this->rotY = angle;
+    this->rot.y = angle;
 }
 
 float membre::getParentsRotationY()
 {
-    return this->rotY + (this->parent != NULL ? this->parent->getParentsRotationY() : 0);
+    return this->rot.y + (this->parent != NULL ? this->parent->getParentsRotationY() : 0);
 }
 
 Transform membre::getRotationY()
@@ -112,12 +111,12 @@ Transform membre::getRotationY()
 
 void membre::rotateZ(float angle)
 {
-    this->rotZ = angle;
+    this->rot.z = angle;
 }
 
 float membre::getParentsRotationZ()
 {
-    return this->rotZ + (this->parent != NULL ? this->parent->getParentsRotationZ() : 0);
+    return this->rot.z + (this->parent != NULL ? this->parent->getParentsRotationZ() : 0);
 }
 
 Transform membre::getRotationZ()

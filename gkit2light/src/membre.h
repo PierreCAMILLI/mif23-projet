@@ -1,5 +1,6 @@
 #ifndef MEMBRE_H
 #define MEMBRE_H
+#include "vec.h"
 #include "mesh.h"
 
 class membre
@@ -10,9 +11,10 @@ class membre
 
     membre* parent;
 
-    float x, y, z, offsetX, offsetY, offsetZ, scaleX, scaleY, scaleZ, rotX, rotY, rotZ;
-
-    float angle;
+    Vector pos;
+    Vector offset;
+    Vector scale;
+    Vector rot;
 
     // Méthodes
     membre();

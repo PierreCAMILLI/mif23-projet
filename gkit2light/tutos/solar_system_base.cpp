@@ -237,11 +237,12 @@ int draw( )
     if(key_state('z'))
         prog--;
 
-    //boule2->rotateY(prog);
+    boule2->rotateY(prog);
     boule2->rotateXYZ(75,0,0);
     boule3->rotateXYZ(-75, prog, prog+45);
-    //boule4->rotateY(prog);
-    //boule5->rotateY(-prog);
+    //boule4->rotateZ(-prog);
+    //boule5->rotateZ(-prog);
+    //torse->rotateZ(prog);
 
     // affiche la grille / repere
     //draw(grid, camera);
