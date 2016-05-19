@@ -12,7 +12,6 @@ class membre
     membre* parent;
 
     Vector pos;
-    Vector offset;
     Vector scale;
     Vector rot;
 
@@ -20,31 +19,19 @@ class membre
     membre();
 
     void translate(float x, float y, float z);
-    float getParentsX();
-    float getParentsY();
-    float getParentsZ();
     Transform getParentsTranslation();
     Transform getTranslation();
 
     void rescale(float x, float y, float z);
     Transform getScale();
 
-    void setOffset(float x, float y, float z);
-    float getParentsOffsetX();
-    float getParentsOffsetY();
-    float getParentsOffsetZ();
-    Transform getOffset();
-
     void rotateX(float angle);
-    float getParentsRotationX();
     Transform getRotationX();
 
     void rotateY(float angle);
-    float getParentsRotationY();
     Transform getRotationY();
 
     void rotateZ(float angle);
-    float getParentsRotationZ();
     Transform getRotationZ();
 
     void rotateXYZ(float angleX, float angleY, float angleZ);

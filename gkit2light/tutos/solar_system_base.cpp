@@ -285,7 +285,7 @@ int draw( )
         }
     }
     if(key_state('c')){
-        // Position french cancan
+        // Position henshin
         setCompteurToZero();
         int val[] = {0,0,
                     50,50,50,50,0,
@@ -314,7 +314,7 @@ int draw( )
         animation = 2;
     }
     if(key_state('n')){
-        // Animation courir
+        // Animation du buste
         setCompteurToZero();
         for(unsigned int i = 0; i < 21; i++){
             poses[i] = 0;
@@ -423,8 +423,6 @@ int draw( )
             torse->rotateZ(45*sin(SDL_GetTicks()*0.002)+tetep);
             break;
     }
-
-    //std::cout << prog << std::endl;
 
     // affiche la grille / repere
     //draw(grid, camera);
