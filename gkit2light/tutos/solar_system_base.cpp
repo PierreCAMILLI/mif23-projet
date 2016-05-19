@@ -42,9 +42,20 @@ membre* tibia2;
 membre* cuisse2;
 membre* boule5;
 
-int prog;
+int tetep, bras1p, bras2p, jambe1p, jambe2p;
+
+int animation;
 
 int * poses;
+
+void setCompteurToZero(){
+    animation = 0;
+    tetep = 0;
+    bras1p = 0;
+    bras2p = 0;
+    jambe1p = 0;
+    jambe2p = 0;
+}
 
 void drawMembre( membre * m){
     if(m->parent != NULL){
@@ -84,7 +95,7 @@ int init( )
     grid = make_grid(50);
     grid.color = make_black() ;
 
-    prog = 0;
+    setCompteurToZero();
 
     std::cout << "Test Constructor" << std::endl;
     // Partie tete
@@ -239,40 +250,181 @@ int draw( )
         // deplace le point de rotation
         orbiter_translation(camera, (float) mx / (float) window_width(), (float) my / (float) window_height());
     if(key_state('a'))
-        prog++;
+        tetep++;
     if(key_state('z'))
-        prog--;
+        tetep--;    std::cout << "tetep : " << tetep << std::endl;
+    if(key_state('e'))
+        bras1p++;
+    if(key_state('r'))
+        bras1p--;   std::cout << "bras1p : " << bras1p << std::endl;
+    if(key_state('t'))
+        bras2p++;
+    if(key_state('y'))
+        bras2p--;   std::cout << "bras2p : " << bras2p << std::endl;
+    if(key_state('u'))
+        jambe1p++;
+    if(key_state('i'))
+        jambe1p--;  std::cout << "jambe1p : " << jambe1p << std::endl;
+    if(key_state('o'))
+        jambe2p++;
+    if(key_state('p'))
+        jambe2p--;  std::cout << "jambe2p : " << jambe2p << std::endl;
     if(key_state('w')){
-        prog = 0;
+        // Position de base
+        setCompteurToZero();
+        for(unsigned int i = 0; i < 21; i++){
+            poses[i] = 0;
+        }
+    }
+    if(key_state('x')){
+        // Position french cancan
+        setCompteurToZero();
+        int val[] = {0,0,55,55,55,55,0,-55,-55,-55,-55,0,0,0,0,110,55,-110,55,0,0};
+        for(unsigned int i = 0; i < 21; i++){
+            poses[i] = val[i];
+        }
+    }
+    if(key_state('c')){
+        // Position french cancan
+        setCompteurToZero();
+        int val[] = {0,0,
+                    50,50,50,50,0,
+                    50,-10,-10,-10,0,
+                    40,-90,-20,110,
+                    45,0,55,-60,
+                    -32};
+        for(unsigned int i = 0; i < 21; i++){
+            poses[i] = val[i];
+        }
+    }
+    if(key_state('v')){
+        // Animation rotation des bras
+        setCompteurToZero();
+        for(unsigned int i = 0; i < 21; i++){
+            poses[i] = 0;
+        }
+        animation = 1;
+    }
+    if(key_state('b')){
+        // Animation courir
+        setCompteurToZero();
+        for(unsigned int i = 0; i < 21; i++){
+            poses[i] = 0;
+        }
+        animation = 2;
+    }
+    if(key_state('n')){
+        // Animation courir
+        setCompteurToZero();
+        for(unsigned int i = 0; i < 21; i++){
+            poses[i] = 0;
+        }
+        animation = 3;
     }
 
     tete->rotateY(poses[0]);
     boule1->rotateY(poses[1]);
 
-    boule2->rotateY(prog+poses[2]);
-    bras1->rotateY(prog+poses[3]);
-    avantbras1->rotateY(prog+poses[4]);
-    poignet1->rotateY(prog+poses[5]);
-    main1->rotateY(poses[6]);
+    switch(animation){
+        default:
+            boule2->rotateY(bras1p+poses[2]);
+            bras1->rotateY(bras1p+poses[3]);
+            avantbras1->rotateY(bras1p+poses[4]);
+            poignet1->rotateY(bras1p+poses[5]);
+            main1->rotateY(bras1p+poses[6]);
+            break;
+        case 1:
+            boule2->rotateY(30*sin(SDL_GetTicks()*0.001)+bras1p);
+            bras1->rotateY(30*sin(SDL_GetTicks()*0.001)+bras1p);
+            avantbras1->rotateY(30*sin(SDL_GetTicks()*0.001)+bras1p);
+            poignet1->rotateY(30*sin(SDL_GetTicks()*0.001)+bras1p);
+            main1->rotateY(30*sin(SDL_GetTicks()*0.001)+bras1p);
+            break;
+        case 2:
+            boule2->rotateY(-20+abs(55*sin(SDL_GetTicks()*0.002))+bras1p);
+            bras1->rotateY(-40+abs(65*sin(SDL_GetTicks()*0.002))+bras1p);
+            avantbras1->rotateY(40+abs(45*sin(SDL_GetTicks()*0.002))+bras1p);
+            poignet1->rotateY(abs(25*sin(SDL_GetTicks()*0.002))+bras1p);
+            main1->rotateY(abs(10*sin(SDL_GetTicks()*0.002))+bras1p);
+            break;
+    }
 
-    boule3->rotateY(90-prog+poses[7]);
-    bras2->rotateY(90-prog+poses[8]);
-    avantbras2->rotateY(-prog+poses[9]);
-    poignet2->rotateY(-prog+poses[10]);
-    main2->rotateY(poses[11]);
-    //boule2->rotateXYZ(75,0,0);
-    //boule3->rotateXYZ(-75, prog, prog+45);
-    pied1->rotateZ(prog+poses[12]);
-    tibia1->rotateZ(poses[13]);
-    cuisse1->rotateZ(poses[14]);
-    boule4->rotateZ(poses[15]);
+    switch(animation){
+        default:
+            boule3->rotateY(90-bras2p+poses[7]);
+            bras2->rotateY(90-bras2p+poses[8]);
+            avantbras2->rotateY(-bras2p+poses[9]);
+            poignet2->rotateY(-bras2p+poses[10]);
+            main2->rotateY(-bras2p+poses[11]);
+            break;
+        case 1:
+            boule3->rotateY((90+(30*sin(SDL_GetTicks()*0.001)))-bras2p);
+            bras2->rotateY((90+(30*sin(SDL_GetTicks()*0.001)))-bras2p);
+            avantbras2->rotateY((30*sin(SDL_GetTicks()*0.001))-bras2p);
+            poignet2->rotateY((30*sin(SDL_GetTicks()*0.001))-bras2p);
+            main2->rotateY((30*sin(SDL_GetTicks()*0.001))-bras2p);
+            break;
+        case 2:
+            boule3->rotateY(-70-(abs(55*cos(SDL_GetTicks()*0.002)))-bras2p);
+            bras2->rotateY(-50-(abs(65*cos(SDL_GetTicks()*0.002)))-bras2p);
+            avantbras2->rotateY(-40+(-abs(45*cos(SDL_GetTicks()*0.002)))-bras2p);
+            poignet2->rotateY((-abs(25*cos(SDL_GetTicks()*0.002)))-bras2p);
+            main2->rotateY((-abs(10*cos(SDL_GetTicks()*0.002)))-bras2p);
+            break;
+    }
 
-    pied2->rotateZ(poses[16]);
-    tibia2->rotateZ(-prog+poses[17]);
-    cuisse2->rotateZ(poses[18]);
-    boule5->rotateZ(-prog+poses[19]);
+    switch(animation){
+        default:
+            pied1->rotateZ(poses[12]);
+            tibia1->rotateZ(-2*jambe1p+poses[13]);
+            cuisse1->rotateZ(jambe1p+poses[14]);
+            boule4->rotateZ(jambe1p+poses[15]);
+            break;
+        case 2:
+            pied1->rotateZ(poses[12]);
+            tibia1->rotateZ(20+(-2*abs(40*sin(SDL_GetTicks()*0.002)))+jambe1p);
+            cuisse1->rotateZ(20+(40*sin(SDL_GetTicks()*0.002))+jambe1p);
+            boule4->rotateZ(20+(40*sin(SDL_GetTicks()*0.002))+jambe1p);
+            break;
+        case 3:
+            pied1->rotateZ(poses[12]);
+            tibia1->rotateZ(-2*jambe1p+poses[13]+jambe1p);
+            cuisse1->rotateZ(jambe1p+poses[14]+jambe1p);
+            boule4->rotateZ(-45*sin(SDL_GetTicks()*0.002)+jambe1p);
+            break;
+    }
 
-    torse->rotateZ(prog+poses[20]);
+    switch(animation){
+        default:
+            pied2->rotateZ(poses[16]);
+            tibia2->rotateZ(-2*jambe2p+poses[17]);
+            cuisse2->rotateZ(jambe2p+poses[18]);
+            boule5->rotateZ(jambe2p+poses[19]);
+            break;
+        case 2:
+            pied2->rotateZ(poses[16]);
+            tibia2->rotateZ(20+(-2*abs(60*cos(SDL_GetTicks()*0.002)))+jambe2p);
+            cuisse2->rotateZ(20+(40*cos(SDL_GetTicks()*0.002))+jambe2p);
+            boule5->rotateZ(20+(40*cos(SDL_GetTicks()*0.002))+jambe2p);
+            break;
+        case 3:
+            pied2->rotateZ(poses[16]);
+            tibia2->rotateZ(-2*jambe2p+poses[17]);
+            cuisse2->rotateZ(jambe2p+poses[18]);
+            boule5->rotateZ(-45*sin(SDL_GetTicks()*0.002)+jambe2p);
+            break;
+    }
+
+    switch(animation){
+        default:
+            torse->rotateZ(tetep+poses[20]);
+            break;
+        case 3:
+            torse->rotateZ(45*sin(SDL_GetTicks()*0.002)+tetep);
+            break;
+    }
+
+    //std::cout << prog << std::endl;
 
     // affiche la grille / repere
     //draw(grid, camera);
