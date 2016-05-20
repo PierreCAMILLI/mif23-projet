@@ -252,23 +252,23 @@ int draw( )
     if(key_state('a'))
         tetep++;
     if(key_state('z'))
-        tetep--;    std::cout << "tetep : " << tetep << std::endl;
+        tetep--;
     if(key_state('e'))
         bras1p++;
     if(key_state('r'))
-        bras1p--;   std::cout << "bras1p : " << bras1p << std::endl;
+        bras1p--;
     if(key_state('t'))
         bras2p++;
     if(key_state('y'))
-        bras2p--;   std::cout << "bras2p : " << bras2p << std::endl;
+        bras2p--;
     if(key_state('u'))
         jambe1p++;
     if(key_state('i'))
-        jambe1p--;  std::cout << "jambe1p : " << jambe1p << std::endl;
+        jambe1p--;
     if(key_state('o'))
         jambe2p++;
     if(key_state('p'))
-        jambe2p--;  std::cout << "jambe2p : " << jambe2p << std::endl;
+        jambe2p--;
     if(key_state('w')){
         // Position de base
         setCompteurToZero();

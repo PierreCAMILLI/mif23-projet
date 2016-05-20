@@ -1,18 +1,21 @@
- <head>
-<meta charset="UTF-8">
-<title>gKit2light</title>
-</head> 
-<link rel="stylesheet" href="github-markdown.css">
-<style>
-    .markdown-body {
-        box-sizing: border-box;
-        min-width: 200px;
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 45px;
-    }
-</style>
-<article class="markdown-body">
+# Membres du projet : 	Pierre CAMILLI 11201839
+						Nguyen Viet HOANG 11217233
+
+# EXECUTION DU TP :
+
+Si vous n'avez pas les bibliothèques de gKit installées sur votre ordinateur, veuillez suivre les indications de la partie 'installation'
+indiquées ci-dessous avant de poursuivre cette étape.
+
+Sous Linux, pour exécuter l'application, ouvrez une fenêtre de commande à la racine du projet et exécutez les commandes suivantes :
+
+make clean
+make
+./bin/gKit2light
+
+Pour intéragir avec l'application, vous pouvez :
+- déplacer et cliquer avec les trois boutons de la souris pour vous déplacer dans l'espace ou exécuter des zooms/dézooms
+- utiliser les boutons 'A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' pour déplacer les membres du corps du mannequin
+- utiliser les boutons 'W', 'X', 'C', 'V', 'B', 'N' pour faire prendre différentes poses prédéfinies au mannequin
 
 # installation :
 
