@@ -156,15 +156,16 @@ void DrawSphere(Sphere s)
 
 }
 
-Color getCouleurIntersect(Ray r, Hit &hit){
+Color getCouleurIntersect(Ray r, Hit &hit, Point source){
     float min_hit = FLT_MAX;
     Color intersect_col = plans[0].couleur;
-    hit = {{0,0,0}, make_vector({0,0,0}, {0,0,0}), 0};
+    Hit tmpHit = {{0,0,0}, make_vector({0,0,0}, {0,0,0}), 0};
 
     for(std::vector<Sphere>::iterator it = spheres.begin(); it != spheres.end(); it++){
         if(intersect((*it), r, hit))
         if(hit.t < min_hit){
             min_hit = hit.t;
+            hit = tmpHit;
             intersect_col = (*it).couleur;
         }
     }
@@ -172,10 +173,17 @@ Color getCouleurIntersect(Ray r, Hit &hit){
         if(intersect((*it), r, hit))
         if(hit.t < min_hit){
             min_hit = hit.t;
+            hit = tmpHit;
             intersect_col = (*it).couleur;
         }
     }
-    hit.t = min_hit;
+    Ray s_intersect = make_ray(source, hit.p);
+    if(intersect(s_intersect, hit))
+    {
+        intersect_col.r /= 100;
+        intersect_col.g /= 100;
+        intersect_col.b /= 100;
+    }
     return intersect_col;
 }
 
@@ -190,6 +198,7 @@ int main( int agc, char **argv )
 
 
     // creer les objets de la scene
+    Point source = {-5.0f,-5.0f,-5.0f};
     Point a = {0.0f,0.0f,0.0f};
     Point b = {0.5f,0.5f,0.5f};
     Point c = {-1.0f,-1.0f,-1.0f};
@@ -198,7 +207,6 @@ int main( int agc, char **argv )
     Sphere sphere1{make_identity(), a, 0.5, make_color(255,0,255)};
     Sphere sphere2{make_identity(), b, 0.5, make_color(0,255,0)};
     Sphere sphere3{make_identity(), c, 0.5, make_color(0,0,255)};
-    std::vector<Objecta> objs;
     add(plan);
     add(sphere1);
     add(sphere2);
@@ -213,7 +221,7 @@ int main( int agc, char **argv )
         Ray ray = make_ray(o, e);
 
         Hit hit;
-        image_set_pixel(image, x, y, getCouleurIntersect(ray, hit));
+        image_set_pixel(image, x, y, getCouleurIntersect(ray, hit, source));
     }
 
     // enregistrer l'image
