@@ -160,13 +160,16 @@ Color getCouleurIntersect(Ray r, Hit &hit, Point source){
     float min_hit = FLT_MAX;
     Color intersect_col = plans[0].couleur;
     Hit tmpHit = {{0,0,0}, make_vector({0,0,0}, {0,0,0}), 0};
-
+    bool isSphere = false;
+    Point csphere;
     for(std::vector<Sphere>::iterator it = spheres.begin(); it != spheres.end(); it++){
         if(intersect((*it), r, hit))
         if(hit.t < min_hit){
             min_hit = hit.t;
             hit = tmpHit;
             intersect_col = (*it).couleur;
+            isSphere = true;
+            csphere = (*it).c;
         }
     }
     for(std::vector<Plan>::iterator it = plans.begin(); it != plans.end(); it++){
@@ -175,15 +178,26 @@ Color getCouleurIntersect(Ray r, Hit &hit, Point source){
             min_hit = hit.t;
             hit = tmpHit;
             intersect_col = (*it).couleur;
+            isSphere = false;
         }
     }
-    Ray s_intersect = make_ray(source, hit.p);
+    // Calcul pour l'ombre
+    Vector v;
+    if(isSphere){
+        v = make_vector(csphere, hit.p);
+        //float coeff = cos(dot(normalize(r.direction),normalize(v)));
+        float coeff = cos(dot(normalize(r.direction),normalize(v)));
+        //std::cout << coeff << std::endl;
+        intersect_col = intersect_col*coeff;
+    }
+    /*
+    Ray s_intersect = make_ray(hit.p, source);
     if(intersect(s_intersect, hit))
     {
-        intersect_col.r /= 100;
-        intersect_col.g /= 100;
-        intersect_col.b /= 100;
+        intersect_col = intersect_col/2.0f;
+
     }
+    */
     return intersect_col;
 }
 
@@ -203,10 +217,10 @@ int main( int agc, char **argv )
     Point b = {0.5f,0.5f,0.5f};
     Point c = {-1.0f,-1.0f,-1.0f};
     Vector n = {0.5f, 1.0f, 0.0f};
-    Plan plan{a, n, make_color(255,255,255)};
-    Sphere sphere1{make_identity(), a, 0.5, make_color(255,0,255)};
-    Sphere sphere2{make_identity(), b, 0.5, make_color(0,255,0)};
-    Sphere sphere3{make_identity(), c, 0.5, make_color(0,0,255)};
+    Plan plan{a, n, make_color(1,1,1)};
+    Sphere sphere1{make_identity(), a, 0.5, make_color(1,0,1)};
+    Sphere sphere2{make_identity(), b, 0.5, make_color(0,1,0)};
+    Sphere sphere3{make_identity(), c, 0.5, make_color(0,0,1)};
     add(plan);
     add(sphere1);
     add(sphere2);
@@ -222,7 +236,38 @@ int main( int agc, char **argv )
 
         Hit hit;
         image_set_pixel(image, x, y, getCouleurIntersect(ray, hit, source));
+        // multiplier par l'angle compris entre la surface et le rayon
     }
+
+    /*
+    Point source = {0.0f,3.0f,0.0f};
+    Point a = {-3.0f,0.0f,10.0f};
+    Point b = {-1.0f,2.0f,15.0f};
+    Point c = {0.0f,0.0f,12.0f};
+    Point pl = {0.5f,-1.5f,12.0f};
+    Vector n = {0.0f, 1.0f, 0.0f};
+    Plan plan{a, n, make_color(1,1,1)};
+    Sphere sphere1{make_identity(), a, 0.4, make_color(1,0,1)};
+    Sphere sphere2{make_identity(), b, 0.5, make_color(0,1,0)};
+    Sphere sphere3{make_identity(), c, 0.2, make_color(0,0,1)};
+    add(plan);
+    add(sphere1);
+    add(sphere2);
+    add(sphere3);
+
+    for(int y= 0; y < image.height; y++)
+    for(int x= 0; x < image.width; x++)
+    {
+        // generer l'origine et l'extremite du rayon
+        Point o = d0 + x*dx0 + y*dy0;
+        Point e = {0.0f, 0.0f, 5.0f};
+        Ray ray = make_ray(o, e);
+
+        Hit hit;
+        image_set_pixel(image, x, y, getCouleurIntersect(ray, hit, source));
+        // multiplier par l'angle compris entre la surface et le rayon
+    }
+    */
 
     // enregistrer l'image
     write_image(image, "render.png");
