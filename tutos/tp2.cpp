@@ -158,11 +158,11 @@ Color getCouleurIntersect(Ray r, Hit &hit){
         // Le rayon intercepte la sphère
         if(intersect(s, r, hit)){
             //// Ombrage
-            // Calcul de la normale
+            // Point d'intersection entre le rayon et la sphère
             Point croix = hit.p + hit.t*hit.n;
+            // Calcul de la normale
             Vector normale = make_vector(s.c, croix);
             // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
-            //float coeff = dot(normalize(r.direction),normalize(normale));
             float coeff = dot(normalize(r.direction),normalize(normale));
             // On créé la couleur
             intersect_col = s.couleur*coeff;
