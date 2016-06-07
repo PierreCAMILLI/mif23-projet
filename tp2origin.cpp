@@ -150,29 +150,37 @@ Color getCouleurIntersect(Ray r, Hit &hit){
     hit.t = FLT_MAX;
     Color intersect_col = make_color(0,0,0);
     // Instanciation du point d'impact du rayon
+    Hit tmpHit;
     // Obtention de la couleur pour contact avec une sphère
+    bool hited = false;
     for(std::vector<Sphere>::iterator it = spheres.begin(); it != spheres.end(); it++){
 
         Sphere s = (*it);
 
         // Le rayon intercepte la sphère
-        if(intersect(s, r, hit)){
+        if(intersect(s, r, tmpHit)){
             // La sphère intercepté est la plus proche de la source
-            //// Ombrage
-            // Calcul de la normale
-            Vector normale = make_vector(s.c, hit.p);
-            // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
-            //float coeff = dot(normalize(r.direction),normalize(normale));
-            float coeff = dot(normalize(r.direction),normalize(normale));
-            // On créé la couleur
-            intersect_col = s.couleur*coeff;
+            if(tmpHit.t < hit.t){
+                hit = tmpHit;
+                //// Ombrage
+                // Calcul de la normale
+                Vector normale = make_vector(s.c, tmpHit.p);
+                // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
+                //float coeff = dot(normalize(r.direction),normalize(normale));
+                float coeff = dot(normalize(r.direction),normalize(normale));
+                // On créé la couleur
+                intersect_col = s.couleur*coeff;
+            }
         }
     }
     // Obtention de la couleur pour contact avec un plan
     for(std::vector<Plan>::iterator it = plans.begin(); it != plans.end(); it++){
         Plan p = (*it);
-        if(intersect(p, r, hit)){
-            intersect_col = p.couleur;
+        if(intersect(p, r, tmpHit)){
+            if(tmpHit.t < hit.t){
+                hit = tmpHit;
+                intersect_col = p.couleur;
+            }
         }
     }
     return intersect_col;
@@ -195,7 +203,7 @@ int main( int agc, char **argv )
     Point a = {0.0f,0.0f,0.0f};
     Point b = {0.5f,0.5f,0.5f};
     Point c = {-1.0f,-1.0f,-1.0f};
-    Vector n = {0.0f, 100.0f, 100.0f};
+    Vector n = {0.5f, 1.0f, 0.0f};
     Plan plan{a, n, make_color(1.0f,1.0f,1.0f)};
     Sphere sphere1{make_identity(), a, 0.75, make_color(1.0f,0.0f,1.0f)};
     Sphere sphere2{make_identity(), b, 0.75, make_color(0.0f,1.0f,0.0f)};
