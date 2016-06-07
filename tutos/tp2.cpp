@@ -11,8 +11,6 @@
 #include "mat.h"
 #include "orbiter.h"
 
-#define RANGE 1000
-
 // Rayon
 struct Ray
 {
@@ -73,11 +71,39 @@ struct Plan
     Color couleur;
 };
 
+struct Triangle
+{
+    Point p1;
+    Point p2;
+    Point p3;
+    Color couleur;
+};
+
+struct Carre
+{
+    Triangle t1;
+    Triangle t2;
+};
+
+Carre make_carre(Point p1, Point p2, Point p3, Point p4, Color col){
+    Triangle t1{p1,p2,p3, col};
+    Triangle t2{p4,p2,p3, col};
+    Carre c{t1, t2};
+    return c;
+};
+
+Carre make_carre(Point p1, Point p2, Point p3, Point p4){
+    return make_carre(p1, p2, p3, p4, make_color(0,0,0));
+};
+
 // Vecteur de sphères
 std::vector<Sphere> spheres;
 
 // Vecteur de plans
 std::vector<Plan> plans;
+
+// Vecteur de carrés
+std::vector<Carre> carres;
 
 // Ajoute un plan à la figure
 void add(Plan plan){
@@ -87,6 +113,11 @@ void add(Plan plan){
 // Ajoute une sphère à la figure
 void add(Sphere sphere){
     spheres.push_back(sphere);
+}
+
+// Ajoute un carré à la figure
+void add(Carre carre){
+    carres.push_back(carre);
 }
 
 // Indique si le rayon croise le plan
@@ -133,6 +164,55 @@ bool intersect(Sphere sphere,Ray ray,Hit &hit)
         return false;
     }
 }
+float aireTriangle(Point A, Point B, Point C)
+{
+    float AB =  length(make_vector(A,B));
+    float AC =  length(make_vector(A,C));
+    float BC =  length(make_vector(C,B));
+    float pABC = (AB+AC+BC)/2;
+    float aABC = sqrtf(pABC*(pABC - AB)*(pABC - AC)*(pABC - BC));
+    return aABC;
+}
+bool insideTriangle(Point p, Triangle triangle){
+    float pABC = aireTriangle(triangle.p1,triangle.p2,triangle.p3);
+    float pPAB = aireTriangle(triangle.p1,triangle.p2,p);
+    float pPBC = aireTriangle(p,triangle.p2,triangle.p3);
+    float pPAC = aireTriangle(triangle.p1,p,triangle.p3);
+    if(pABC == pPAB + pPBC + pPAC)
+        return true;
+    else
+        return false;
+}
+
+bool intersect(Triangle triangle, Ray ray, Hit &hit){
+    Vector normale = cross(make_vector(triangle.p2, triangle.p1),make_vector(triangle.p3, triangle.p1));
+    Plan p = {triangle.p1, normale, triangle.couleur};
+    if(intersect(p, ray, hit)){
+        // Point d'intersection entre le rayon et le plan
+        Point tmp = hit.p + hit.t*hit.n;
+        if(insideTriangle(tmp, triangle))
+        {
+            float t_hit = sqrtf(pow(ray.origin.x-tmp.x,2)+pow(ray.origin.y-tmp.y,2)+pow(ray.origin.z-tmp.z,2));
+            if(t_hit < hit.t){
+                hit.p = ray.origin;
+                hit.n = ray.direction;
+                hit.t = t_hit;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool intersect(Carre carre, Ray ray, Hit &hit){
+    if(intersect(carre.t1,ray,hit)){
+        return true;
+    }
+    if(intersect(carre.t2,ray,hit)){
+        return true;
+    }
+    return false;
+}
 
 // Indique si le rayon croise quelque chose
 bool intersect(Ray ray,Hit &hit){
@@ -173,11 +253,20 @@ Color getCouleurIntersect(Ray r, Hit &hit){
     for(std::vector<Plan>::iterator it = plans.begin(); it != plans.end(); it++){
         Plan p = (*it);
         if(intersect(p, r, hit)){
-            if(hit.t < RANGE){
-                // Si le rayon est dans la distance de visionnage
-                float coeff = dot(normalize(r.direction),normalize(p.normal));
-                intersect_col = p.couleur * coeff;
-            }
+            // Si le rayon est dans la distance de visionnage
+            float coeff = dot(normalize(r.direction),normalize(p.normal));
+            intersect_col = p.couleur * coeff;
+        }
+    }
+    // Obtention de la couleur pour contact avec un carré
+    for(std::vector<Carre>::iterator it = carres.begin(); it != carres.end(); it++){
+        Carre c = (*it);
+        if(intersect(c, r, hit)){
+            // Si le rayon est dans la distance de visionnage
+            Triangle triangle = c.t1;
+            Vector normal = cross(make_vector(triangle.p2, triangle.p1),make_vector(triangle.p3, triangle.p1));
+            float coeff = dot(normalize(r.direction),normalize(normal));
+            intersect_col = triangle.couleur * coeff;
         }
     }
     return intersect_col;
@@ -205,10 +294,12 @@ int main( int agc, char **argv )
     Sphere sphere1{make_identity(), a, 0.75, make_color(1.0f,0.0f,1.0f)};
     Sphere sphere2{make_identity(), b, 0.75, make_color(0.0f,1.0f,0.0f)};
     Sphere sphere3{make_identity(), c, 0.75, make_color(0.0f,0.0f,1.0f)};
+    Carre carre1 = make_carre(a, {0,1000,0}, {1000,1000,0}, {1000,0,0}, make_color(1,0,0));
     add(plan);
     add(sphere1);
     add(sphere2);
     add(sphere3);
+    add(carre1);
 
     for(int y= 0; y < image.height; y++)
     for(int x= 0; x < image.width; x++)
