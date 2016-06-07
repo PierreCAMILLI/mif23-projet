@@ -11,6 +11,8 @@
 #include "mat.h"
 #include "orbiter.h"
 
+#define RANGE 1000
+
 // Rayon
 struct Ray
 {
@@ -171,7 +173,11 @@ Color getCouleurIntersect(Ray r, Hit &hit){
     for(std::vector<Plan>::iterator it = plans.begin(); it != plans.end(); it++){
         Plan p = (*it);
         if(intersect(p, r, hit)){
-            intersect_col = p.couleur;
+            if(hit.t < RANGE){
+                // Si le rayon est dans la distance de visionnage
+                float coeff = dot(normalize(r.direction),normalize(p.normal));
+                intersect_col = p.couleur * coeff;
+            }
         }
     }
     return intersect_col;
@@ -194,7 +200,7 @@ int main( int agc, char **argv )
     Point a = {0.0f,0.0f,0.0f};
     Point b = {0.5f,0.5f,0.5f};
     Point c = {-1.0f,-1.0f,-1.0f};
-    Vector n = {0.0f, 100.0f, 100.0f};
+    Vector n = {0.0f, 100.0f, 1.0f};
     Plan plan{a, n, make_color(1.0f,1.0f,1.0f)};
     Sphere sphere1{make_identity(), a, 0.75, make_color(1.0f,0.0f,1.0f)};
     Sphere sphere2{make_identity(), b, 0.75, make_color(0.0f,1.0f,0.0f)};
