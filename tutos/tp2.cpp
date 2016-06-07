@@ -151,7 +151,7 @@ bool intersect(Ray ray,Hit &hit){
 // Retourne la couleur de l'objet touché par le rayon
 Color getCouleurIntersect(Ray r, Hit &hit, Point source){
     float min_hit = FLT_MAX;
-    Color intersect_col = plans[0].couleur;
+    Color intersect_col = make_color(0,0,0);
     // Instanciation du point d'impact du rayon
     Hit tmpHit;
     // Obtention de la couleur pour contact avec une sphère
