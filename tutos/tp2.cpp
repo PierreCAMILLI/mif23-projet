@@ -59,10 +59,7 @@ Sphere make_sphere( const Transform& model, const Point& center, const float rad
 Sphere make_sphere( const Transform& model, const Point& center, const float radius, const Color c )
 {
     Sphere s = make_sphere(model, center, radius);
-    s.couleur.r = c.r;
-    s.couleur.g = c.g;
-    s.couleur.b = c.b;
-    s.couleur.a = c.a;
+    s.couleur = c;
     return s;
 }
 
@@ -149,12 +146,13 @@ bool intersect(Ray ray,Hit &hit){
 }
 
 // Retourne la couleur de l'objet touché par le rayon
-Color getCouleurIntersect(Ray r, Hit &hit, Point source){
-    float min_hit = FLT_MAX;
+Color getCouleurIntersect(Ray r, Hit &hit){
+    hit.t = FLT_MAX;
     Color intersect_col = make_color(0,0,0);
     // Instanciation du point d'impact du rayon
     Hit tmpHit;
     // Obtention de la couleur pour contact avec une sphère
+    bool hited = false;
     for(std::vector<Sphere>::iterator it = spheres.begin(); it != spheres.end(); it++){
 
         Sphere s = (*it);
@@ -162,14 +160,13 @@ Color getCouleurIntersect(Ray r, Hit &hit, Point source){
         // Le rayon intercepte la sphère
         if(intersect(s, r, tmpHit)){
             // La sphère intercepté est la plus proche de la source
-            //std::cout << "tmpHit.t = " << tmpHit.t << ", min_hit = " << min_hit << std::endl;
-            if(tmpHit.t < min_hit){
+            if(tmpHit.t < hit.t){
                 hit = tmpHit;
-                min_hit = hit.t;
                 //// Ombrage
                 // Calcul de la normale
                 Vector normale = make_vector(s.c, tmpHit.p);
                 // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
+                //float coeff = dot(normalize(r.direction),normalize(normale));
                 float coeff = dot(normalize(r.direction),normalize(normale));
                 // On créé la couleur
                 intersect_col = s.couleur*coeff;
@@ -180,9 +177,8 @@ Color getCouleurIntersect(Ray r, Hit &hit, Point source){
     for(std::vector<Plan>::iterator it = plans.begin(); it != plans.end(); it++){
         Plan p = (*it);
         if(intersect(p, r, tmpHit)){
-            if(tmpHit.t < min_hit){
+            if(tmpHit.t < hit.t){
                 hit = tmpHit;
-                min_hit = hit.t;
                 intersect_col = p.couleur;
             }
         }
@@ -204,12 +200,11 @@ int main( int agc, char **argv )
 
 
     // creer les objets de la scene
-    Point source = {-5.0f,-5.0f,-5.0f};
     Point a = {0.0f,0.0f,0.0f};
     Point b = {0.5f,0.5f,0.5f};
     Point c = {-1.0f,-1.0f,-1.0f};
     Vector n = {0.0f, 100.0f, 100.0f};
-    Plan plan{a, n, make_color(1,1,1)};
+    Plan plan{a, n, make_color(1.0f,1.0f,1.0f)};
     Sphere sphere1{make_identity(), a, 0.75, make_color(1.0f,0.0f,1.0f)};
     Sphere sphere2{make_identity(), b, 0.75, make_color(0.0f,1.0f,0.0f)};
     Sphere sphere3{make_identity(), c, 0.75, make_color(0.0f,0.0f,1.0f)};
@@ -227,7 +222,7 @@ int main( int agc, char **argv )
         Ray ray = make_ray(o, e);
 
         Hit hit;
-        image_set_pixel(image, x, y, getCouleurIntersect(ray, hit, source));
+        image_set_pixel(image, x, y, getCouleurIntersect(ray, hit));
         // multiplier par l'angle compris entre la surface et le rayon
     }
 
