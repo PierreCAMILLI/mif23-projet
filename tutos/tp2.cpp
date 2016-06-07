@@ -149,7 +149,6 @@ bool intersect(Ray ray,Hit &hit){
 Color getCouleurIntersect(Ray r, Hit &hit){
     hit.t = FLT_MAX;
     Color intersect_col = make_color(0,0,0);
-    // Instanciation du point d'impact du rayon
     // Obtention de la couleur pour contact avec une sphère
     for(std::vector<Sphere>::iterator it = spheres.begin(); it != spheres.end(); it++){
 
@@ -163,7 +162,7 @@ Color getCouleurIntersect(Ray r, Hit &hit){
             // Calcul de la normale
             Vector normale = make_vector(s.c, croix);
             // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
-            float coeff = dot(normalize(r.direction),normalize(normale));
+            float coeff = -dot(normalize(r.direction),normalize(normale));
             // On créé la couleur
             intersect_col = s.couleur*coeff;
         }
