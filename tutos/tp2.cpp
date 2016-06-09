@@ -89,9 +89,7 @@ struct Carre
 
 Carre make_carre(Point p1, Point p2, Point p3, Color col){
     Triangle t1{p1,p2,p3, col};
-    std::cout << "Coordonnée recherchée : (0,0,-1)" << std::endl;
     Point p4 = {p3.x+(p2.x-p1.x),p3.y+(p2.y-p1.y),p3.z+(p2.z-p1.z)};
-    std::cout << "p4(" << p4.x << "," << p4.y << "," << p4.z << ")" << std::endl;
     Triangle t2{p4,p2,p3, col};
     Carre c{t1, t2};
     return c;
@@ -123,6 +121,56 @@ void add(Sphere sphere){
 // Ajoute un carré à la figure
 void add(Carre carre){
     carres.push_back(carre);
+}
+
+// p2 et p3 représentent la diagonale du damier
+void make_damier(Point p1, Point p2, Point p3, int nb_carre_hor, int nb_carre_ver, Color coul1, Color coul2){
+    // On créé deux booléens pour s'assurer que les couleurs forment bien un damier quel que soit le nombre de cases
+    bool col_choice = false;
+    bool choice;
+    for(int i = 0; i < nb_carre_ver; i++){
+        col_choice = !col_choice;
+        choice = col_choice;
+        // On initialise les deux premiers points
+        // np1-----*-----
+        // |       |
+        // |       |
+        // |       |
+        // np2-----*-----
+        Point np1 = {   p1.x + ((p2.x-p1.x)/nb_carre_ver)*i,
+                        p1.y + ((p2.y-p1.y)/nb_carre_ver)*i,
+                        p1.z + ((p2.z-p1.z)/nb_carre_ver)*i
+                    };
+        Point np2 = {   np1.x + (p2.x-p1.x)/nb_carre_ver,
+                        np1.y + (p2.y-p1.y)/nb_carre_ver,
+                        np1.z + (p2.z-p1.z)/nb_carre_ver
+                    };
+        for(int j = 0; j < nb_carre_hor; j++){
+            // On initialise le troisième point
+            // np1-----np3---
+            // |       |
+            // |       |
+            // |       |
+            // np2-----*-----
+            Point np3 = {   np1.x + (p3.x-p1.x)/nb_carre_hor,
+                            np1.y + (p3.y-p1.y)/nb_carre_hor,
+                            np1.z + (p3.z-p1.z)/nb_carre_hor,
+                        };
+            // On créé le carré
+            Carre c = make_carre(np1,np2,np3,(choice ? coul1 : coul2));
+            add(c);
+            // On fait passer les points vers la case suivante
+            // *-----np1---
+            // |       |
+            // |       |
+            // |       |
+            // *-----np2---
+            np2 = {np3.x+(np2.x-np1.x),np3.y+(np2.y-np1.y),np3.z+(np2.z-np1.z)};
+            np1 = {np3.x, np3.y, np3.z};
+            // On inverse la couleur
+            choice = !choice;
+        }
+    }
 }
 
 // Indique si le rayon croise le plan
@@ -351,12 +399,13 @@ int main( int agc, char **argv )
     Sphere sphere1{make_identity(), a, 0.75, make_color(1.0f,0.0f,1.0f)};
     Sphere sphere2{make_identity(), b, 0.75, make_color(0.0f,1.0f,0.0f)};
     Sphere sphere3{make_identity(), c, 0.75, make_color(0.0f,0.0f,1.0f)};
-    Carre carre1 = make_carre({-1.0f,1.0f,2.0f}, {-1.0f,0.0f,2.0f}, {0.0f,1.0f,2.0f}, make_color(1,0,0));
+    //Carre carre1 = make_carre({-1.0f,1.0f,2.0f}, {-1.0f,0.0f,2.0f}, {0.0f,1.0f,2.0f}, make_color(1,0,0));
+    make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,3.0f},5,5,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
     add(plan);
     add(sphere1);
     add(sphere2);
     add(sphere3);
-    add(carre1);
+//    add(carre1);
 
     for(int y= 0; y < image.height; y++)
     for(int x= 0; x < image.width; x++)
