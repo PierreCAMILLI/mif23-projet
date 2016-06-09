@@ -11,6 +11,8 @@
 #include "mat.h"
 #include "orbiter.h"
 
+#define EPSILON 0.000001
+
 // Rayon
 struct Ray
 {
@@ -85,15 +87,18 @@ struct Carre
     Triangle t2;
 };
 
-Carre make_carre(Point p1, Point p2, Point p3, Point p4, Color col){
+Carre make_carre(Point p1, Point p2, Point p3, Color col){
     Triangle t1{p1,p2,p3, col};
+    std::cout << "Coordonnée recherchée : (0,0,-1)" << std::endl;
+    Point p4 = {p3.x+(p2.x-p1.x),p3.y+(p2.y-p1.y),p3.z+(p2.z-p1.z)};
+    std::cout << "p4(" << p4.x << "," << p4.y << "," << p4.z << ")" << std::endl;
     Triangle t2{p4,p2,p3, col};
     Carre c{t1, t2};
     return c;
 };
 
-Carre make_carre(Point p1, Point p2, Point p3, Point p4){
-    return make_carre(p1, p2, p3, p4, make_color(0,0,0));
+Carre make_carre(Point p1, Point p2, Point p3){
+    return make_carre(p1, p2, p3, make_color(0,0,0));
 };
 
 // Vecteur de sphères
@@ -164,7 +169,7 @@ bool intersect(Sphere sphere,Ray ray,Hit &hit)
         return false;
     }
 }
-float aireTriangle(Point A, Point B, Point C)
+float aire(Point A, Point B, Point C)
 {
     float AB =  length(make_vector(A,B));
     float AC =  length(make_vector(A,C));
@@ -173,23 +178,98 @@ float aireTriangle(Point A, Point B, Point C)
     float aABC = sqrtf(pABC*(pABC - AB)*(pABC - AC)*(pABC - BC));
     return aABC;
 }
+/*
 bool insideTriangle(Point p, Triangle triangle){
-    float pABC = aireTriangle(triangle.p1,triangle.p2,triangle.p3);
-    float pPAB = aireTriangle(triangle.p1,triangle.p2,p);
-    float pPBC = aireTriangle(p,triangle.p2,triangle.p3);
-    float pPAC = aireTriangle(triangle.p1,p,triangle.p3);
+    float pABC = aire(triangle.p1,triangle.p2,triangle.p3);
+    float pPAB = aire(triangle.p1,triangle.p2,p);
+    float pPBC = aire(p,triangle.p2,triangle.p3);
+    float pPAC = aire(triangle.p1,p,triangle.p3);
+    if(abs(pABC - (pPAB + pPBC + pPAC )) < 20){
+        std::cout << "Aire du triangle : " << pABC << std::endl;
+        std::cout << "Trois aires combiné : " << pPAB + pPBC + pPAC << std::endl;
+    }
     if(pABC == pPAB + pPBC + pPAC)
         return true;
     else
         return false;
 }
+*/
+
+/*
+Point prod(Point p, float f){
+    Point np{p.x*f,p.y*f,p.z*f};
+    return np;
+}
+
+Point sum(Point p1, Point p2){
+    Point np{p1.x+p2.x,p1.y+p2.y,p1.z+p2.z};
+    return np;
+}
+*/
+bool insideTriangle(Point p, Triangle triangle){
+    float tA = aire(triangle.p1,triangle.p2,triangle.p3);
+    std::cout << "tA = " << tA << std::endl;
+    float alpha = aire(p, triangle.p1, triangle.p2)/tA;
+    float beta = aire(p, triangle.p2, triangle.p3)/tA;
+    float gamma = 1 - alpha - beta;
+        std::cout << "alpha = " << alpha << std::endl;
+        std::cout << "beta = " << beta << std::endl;
+        std::cout << "gamma = " << gamma << std::endl << std::endl;
+    return (alpha > 0 && beta > 0 && gamma > 0);
+    /*
+    Point tmp = sum(sum(prod(triangle.p1, alpha), prod(triangle.p2, beta)), prod(triangle.p3, gamma));
+    if(abs(p.x - tmp.x) < 20 && abs(p.y - tmp.y) < 20 && abs(p.z - tmp.z) < 20){
+        std::cout << "Point p : " << p.x << ", " << p.y << ", " << p.z << std::endl;
+        std::cout << "Point tmp : "<< tmp.x << ", " << tmp.y << ", " << tmp.z << std::endl;
+    }
+    return (p.x == tmp.x && p.y == tmp.y && p.z == tmp.z);
+    */
+}
 
 bool intersect(Triangle triangle, Ray ray, Hit &hit){
-    Vector normale = cross(make_vector(triangle.p2, triangle.p1),make_vector(triangle.p3, triangle.p1));
+
+    // Find vectors for two edges sharing triangle.p1
+    Vector edge1 = make_vector(triangle.p2,triangle.p1);
+    Vector edge2 = make_vector(triangle.p3,triangle.p1);
+
+    // Begin calculating determinant - also used to calculate U parameter
+    Vector pvec = cross(ray.direction, edge2);
+
+    // If determinant is near zero, ray lies in plane of triangle
+    float det = dot(edge1, pvec);
+
+    if(det > -EPSILON && det < EPSILON)
+        return false;
+    float inv_det = 1/det;
+
+    // Calculate distance from triangle.p1 to ray origin
+    Vector tvec = make_vector(ray.origin, triangle.p1);
+
+    // Calculate U parameter and test bounds
+    float u = dot(tvec,pvec)*inv_det;
+    if(u < 0.0 || u > 1.0)
+        return 0;
+
+    // Prepare to test V parameter
+    Vector qvec = cross(tvec,edge1);
+
+    // Calculate V parameter and test bounds
+    float v = dot(ray.direction, qvec) * inv_det;
+    if(v < 0.0 || u+v > 1.0)
+        return false;
+
+    // Calculate T, ray intersects triangle
+    hit.t = dot(edge2,qvec) * inv_det;
+
+    return true;
+    /*
+    // On calcule la normale du triangle
+    Vector normale = normalize(cross(make_vector(triangle.p1, triangle.p2),make_vector(triangle.p1, triangle.p3)));
     Plan p = {triangle.p1, normale, triangle.couleur};
     if(intersect(p, ray, hit)){
         // Point d'intersection entre le rayon et le plan
         Point tmp = hit.p + hit.t*hit.n;
+
         if(insideTriangle(tmp, triangle))
         {
             float t_hit = sqrtf(pow(ray.origin.x-tmp.x,2)+pow(ray.origin.y-tmp.y,2)+pow(ray.origin.z-tmp.z,2));
@@ -202,6 +282,7 @@ bool intersect(Triangle triangle, Ray ray, Hit &hit){
         }
     }
     return false;
+    */
 }
 
 bool intersect(Carre carre, Ray ray, Hit &hit){
@@ -294,7 +375,7 @@ int main( int agc, char **argv )
     Sphere sphere1{make_identity(), a, 0.75, make_color(1.0f,0.0f,1.0f)};
     Sphere sphere2{make_identity(), b, 0.75, make_color(0.0f,1.0f,0.0f)};
     Sphere sphere3{make_identity(), c, 0.75, make_color(0.0f,0.0f,1.0f)};
-    Carre carre1 = make_carre(a, {0,1000,0}, {1000,1000,0}, {1000,0,0}, make_color(1,0,0));
+    Carre carre1 = make_carre({-1.0f,1.0f,-1.0f}, {-1.0f,0.0f,-1.0f}, {0.0f,1.0f,-1.0f}, make_color(1,0,0));
     add(plan);
     add(sphere1);
     add(sphere2);
