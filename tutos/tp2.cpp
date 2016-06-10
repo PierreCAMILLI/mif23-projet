@@ -87,6 +87,12 @@ struct Carre
     Triangle t2;
 };
 
+struct Damier
+{
+    Plan plan;
+    std::vector<Carre> carres;
+};
+
 Carre make_carre(Point p1, Point p2, Point p3, Color col){
     Triangle t1{p1,p2,p3, col};
     Point p4 = {p3.x+(p2.x-p1.x),p3.y+(p2.y-p1.y),p3.z+(p2.z-p1.z)};
@@ -108,6 +114,9 @@ std::vector<Plan> plans;
 // Vecteur de carrés
 std::vector<Carre> carres;
 
+// Vecteur de carrés
+std::vector<Damier> damiers;
+
 // Ajoute un plan à la figure
 void add(Plan plan){
     plans.push_back(plan);
@@ -123,9 +132,18 @@ void add(Carre carre){
     carres.push_back(carre);
 }
 
+// Ajoute un damier à la figure
+void add(Damier damier){
+    damiers.push_back(damier);
+}
+
 // p2 et p3 représentent la diagonale du damier
-void make_damier(Point p1, Point p2, Point p3, unsigned int nb_carre_hor, unsigned int nb_carre_ver, Color coul1, Color coul2){
+Damier make_damier(Point p1, Point p2, Point p3, unsigned int nb_carre_hor, unsigned int nb_carre_ver, Color coul1, Color coul2){
+    Vector normale = cross(make_vector(p1,p2),make_vector(p3,p2));
+    Plan plan = {p1, normale, make_color(0,0,0)};
+    std::vector<Carre> cases;
     // On créé deux booléens pour s'assurer que les couleurs forment bien un damier quel que soit le nombre de cases
+    Point np1, np2, np3;
     bool col_choice = false;
     bool choice;
     for(int i = 0; i < nb_carre_ver; i++){
@@ -137,14 +155,14 @@ void make_damier(Point p1, Point p2, Point p3, unsigned int nb_carre_hor, unsign
         // |       |
         // |       |
         // np2-----*-----
-        Point np1 = {   p1.x + ((p2.x-p1.x)/nb_carre_ver)*i,
-                        p1.y + ((p2.y-p1.y)/nb_carre_ver)*i,
-                        p1.z + ((p2.z-p1.z)/nb_carre_ver)*i
-                    };
-        Point np2 = {   np1.x + (p2.x-p1.x)/nb_carre_ver,
-                        np1.y + (p2.y-p1.y)/nb_carre_ver,
-                        np1.z + (p2.z-p1.z)/nb_carre_ver
-                    };
+        np1 = { p1.x + ((p2.x-p1.x)/nb_carre_ver)*i,
+                p1.y + ((p2.y-p1.y)/nb_carre_ver)*i,
+                p1.z + ((p2.z-p1.z)/nb_carre_ver)*i
+            };
+        np2 = { np1.x + (p2.x-p1.x)/nb_carre_ver,
+                np1.y + (p2.y-p1.y)/nb_carre_ver,
+                np1.z + (p2.z-p1.z)/nb_carre_ver
+            };
         for(int j = 0; j < nb_carre_hor; j++){
             // On initialise le troisième point
             // np1-----np3---
@@ -152,13 +170,13 @@ void make_damier(Point p1, Point p2, Point p3, unsigned int nb_carre_hor, unsign
             // |       |
             // |       |
             // np2-----*-----
-            Point np3 = {   np1.x + (p3.x-p1.x)/nb_carre_hor,
-                            np1.y + (p3.y-p1.y)/nb_carre_hor,
-                            np1.z + (p3.z-p1.z)/nb_carre_hor,
-                        };
+            np3 = { np1.x + (p3.x-p1.x)/nb_carre_hor,
+                    np1.y + (p3.y-p1.y)/nb_carre_hor,
+                    np1.z + (p3.z-p1.z)/nb_carre_hor,
+                };
             // On créé le carré
             Carre c = make_carre(np1,np2,np3,(choice ? coul1 : coul2));
-            add(c);
+            cases.push_back(c);
             // On fait passer les points vers la case suivante
             // *-----np1---
             // |       |
@@ -171,6 +189,8 @@ void make_damier(Point p1, Point p2, Point p3, unsigned int nb_carre_hor, unsign
             choice = !choice;
         }
     }
+    Damier damier = {plan, cases};
+    return damier;
 }
 
 // Indique si le rayon croise le plan
@@ -354,6 +374,31 @@ Color getCouleurIntersect(Ray r, Hit &hit){
             intersect_col = triangle.couleur * coeff;
         }
     }
+    // Obtention de la couleur pour contact avec un damier
+    Damier dhit;
+    bool touched = false;
+    Hit thit = hit;
+    for(std::vector<Damier>::iterator it = damiers.begin(); it != damiers.end(); it++){
+        Damier d = (*it);
+        if(intersect(d.plan, r, thit)){
+            dhit = d;
+            touched = true;
+        }
+    }
+    if(touched){
+        for(std::vector<Carre>::iterator it = dhit.carres.begin(); it != dhit.carres.end(); it++){
+            Carre c = (*it);
+            if(intersect(c, r, hit)){
+                // Si le rayon est dans la distance de visionnage
+                Triangle triangle = c.t1;
+                Vector normal = cross(make_vector(triangle.p2, triangle.p1),make_vector(triangle.p3, triangle.p1));
+                float coeff = fabs(dot(normalize(r.direction),normalize(normal)));
+                intersect_col = triangle.couleur * coeff;
+                hit = thit;
+                break;
+            }
+        }
+    }
     return intersect_col;
 }
 
@@ -382,25 +427,30 @@ int main( int agc, char **argv )
     //Carre carre1 = make_carre({-1.0f,1.0f,2.0f}, {-1.0f,0.0f,2.0f}, {0.0f,1.0f,2.0f}, make_color(1,0,0));
     //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,3.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
     //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,3.0f},{0.0f,1.0f,1.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
-    make_damier({-1.5f,0.0f,1.0f},{-1.5f,-0.5f,4.0f},{1.5f,0.0f,1.0f},
+    Damier damier1 = make_damier(   {-1.5f,1.0f,0.0f},  // Point en haut à gauche
+                                    {-1.5f,-1.0f,9.5f}, // Point en bas à gauche
+                                    {1.5f,1.0f,0.0f},   // Point en haut à droite
                 9,9,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
     add(plan);
     add(sphere1);
     add(sphere2);
     add(sphere3);
+    add(damier1);
 //    add(carre1);
 
-    for(int y= 0; y < image.height; y++)
-    for(int x= 0; x < image.width; x++)
-    {
-        // generer l'origine et l'extremite du rayon
-        Point o = d0 + x*dx0 + y*dy0;
-        Point e = {0.0f, 0.0f, 5.0f};
-        Ray ray = make_ray(o, e);
+    for(int y= 0; y < image.height; y++){
+        std::cout << "*" << std::flush;
+        for(int x= 0; x < image.width; x++)
+        {
+            // generer l'origine et l'extremite du rayon
+            Point o = d0 + x*dx0 + y*dy0;
+            Point e = {0.0f, 0.0f, 5.0f};
+            Ray ray = make_ray(o, e);
 
-        Hit hit;
-        image_set_pixel(image, x, y, getCouleurIntersect(ray, hit));
-        // multiplier par l'angle compris entre la surface et le rayon
+            Hit hit;
+            image_set_pixel(image, x, y, getCouleurIntersect(ray, hit));
+            // multiplier par l'angle compris entre la surface et le rayon
+        }
     }
 
     // enregistrer l'image
