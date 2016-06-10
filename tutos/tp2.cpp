@@ -124,7 +124,7 @@ void add(Carre carre){
 }
 
 // p2 et p3 représentent la diagonale du damier
-void make_damier(Point p1, Point p2, Point p3, int nb_carre_hor, int nb_carre_ver, Color coul1, Color coul2){
+void make_damier(Point p1, Point p2, Point p3, unsigned int nb_carre_hor, unsigned int nb_carre_ver, Color coul1, Color coul2){
     // On créé deux booléens pour s'assurer que les couleurs forment bien un damier quel que soit le nombre de cases
     bool col_choice = false;
     bool choice;
@@ -400,7 +400,8 @@ int main( int agc, char **argv )
     Sphere sphere2{make_identity(), b, 0.75, make_color(0.0f,1.0f,0.0f)};
     Sphere sphere3{make_identity(), c, 0.75, make_color(0.0f,0.0f,1.0f)};
     //Carre carre1 = make_carre({-1.0f,1.0f,2.0f}, {-1.0f,0.0f,2.0f}, {0.0f,1.0f,2.0f}, make_color(1,0,0));
-    make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,3.0f},5,5,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,3.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,2.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
     add(plan);
     add(sphere1);
     add(sphere2);
