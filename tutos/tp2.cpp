@@ -12,6 +12,7 @@
 #include "orbiter.h"
 
 #define EPSILON 0.000001
+#define fois 10
 
 // Rayon
 struct Ray
@@ -402,6 +403,13 @@ Color getCouleurIntersect(Ray r, Hit &hit){
     return intersect_col;
 }
 
+float RandomFloat(float a, float b) {
+    float random = ((float) rand()) / (float) RAND_MAX;
+    float diff = b - a;
+    float r = random * diff;
+    return a + r;
+}
+
 int main( int agc, char **argv )
 {
     Orbiter camera = make_orbiter();
@@ -438,21 +446,68 @@ int main( int agc, char **argv )
     add(damier1);
 //    add(carre1);
 
-    for(int y= 0; y < image.height; y++){
-        std::cout << "*" << std::flush;
-        for(int x= 0; x < image.width; x++)
-        {
-            // generer l'origine et l'extremite du rayon
-            Point o = d0 + x*dx0 + y*dy0;
+    for(int y= 0; y < image.height; y++)
+    {
+      std::cout<<"*"<<std::flush;
+      for(int x= 0; x < image.width; x++)
+      {
+        /*
+          Point o = d0 + x*dx0 + y*dy0;
+          Point e = {0.0f, 0.0f, 5.0f};
+          Ray ray = make_ray(o, e);
+
+          Hit hit;
+          image_set_pixel(image, x, y, getCouleurIntersect(ray, hit));
+          */
+
+          // generer l'origine et l'extremite du rayon
+          float xmin = x-0.5;
+          float ymin = y-0.5;
+          float r = 0;
+          float g = 0;
+          float b = 0;
+          for(int k = 0; k < fois; k++)
+          {
+            float newX = RandomFloat(xmin, xmin+1);
+            float newY = RandomFloat(ymin, ymin+1);
+            Point o = d0 + newX*dx0 + newY*dy0;
             Point e = {0.0f, 0.0f, 5.0f};
             Ray ray = make_ray(o, e);
 
             Hit hit;
-            image_set_pixel(image, x, y, getCouleurIntersect(ray, hit));
-            // multiplier par l'angle compris entre la surface et le rayon
-        }
-    }
+            Color intersectCol = getCouleurIntersect(ray, hit);
+            r+=intersectCol.r;
+            g+=intersectCol.g;
+            b+=intersectCol.b;
+          }
+          Color pix = make_color(r/(float)fois, g/(float)fois, b/(float)fois);
 
+          image_set_pixel(image, x, y, pix);
+      }
+      //std::cout<<"\n"<<std::flush;
+        // multiplier par l'angle compris entre la surface et le rayon
+    }
+    //Anti-aliasing spacial
+    /*
+    for(int y= 1; y < image.height-1; y++)
+      for(int x= 1; x < image.width-1; x++)
+      {
+          Color tmp = image_pixel(image, x, y);
+          float r = tmp.r;
+          float g = tmp.g;
+          float b = tmp.b;
+          for(int k = -1; k < 2; k++)
+            for(int l = -1; l < 2; l++)
+          {
+            Color voisin = image_pixel(image, x+k, y+l);
+            r+=voisin.r;
+            g+=voisin.g;
+            b+=voisin.b;
+          }
+          Color pix = make_color(r/9.0f, g/9.0f, b/9.0f);
+          image_set_pixel(image, x, y, pix);
+      }
+    */
     // enregistrer l'image
     write_image(image, "render.png");
     // nettoyage
