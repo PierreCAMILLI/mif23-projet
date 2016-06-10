@@ -277,8 +277,9 @@ bool intersect(Triangle triangle, Ray ray, Hit &hit){
 
     // Calculate T, ray intersects triangle
     float ttemp = dot(edge2,qvec) * inv_det;
-    if(hit.t > ttemp){
-        hit.t = ttemp;
+    if(hit.t > -ttemp){
+        hit.t = -ttemp;
+        //std::cout << hit.t << std::endl;
         hit.n = ray.direction;
         hit.p = ray.origin;
         return true;
@@ -286,27 +287,6 @@ bool intersect(Triangle triangle, Ray ray, Hit &hit){
     //std::cout << hit.t << std::endl;
 
     return false;
-    /*
-    // On calcule la normale du triangle
-    Vector normale = normalize(cross(make_vector(triangle.p1, triangle.p2),make_vector(triangle.p1, triangle.p3)));
-    Plan p = {triangle.p1, normale, triangle.couleur};
-    if(intersect(p, ray, hit)){
-        // Point d'intersection entre le rayon et le plan
-        Point tmp = hit.p + hit.t*hit.n;
-
-        if(insideTriangle(tmp, triangle))
-        {
-            float t_hit = sqrtf(pow(ray.origin.x-tmp.x,2)+pow(ray.origin.y-tmp.y,2)+pow(ray.origin.z-tmp.z,2));
-            if(t_hit < hit.t){
-                hit.p = ray.origin;
-                hit.n = ray.direction;
-                hit.t = t_hit;
-                return true;
-            }
-        }
-    }
-    return false;
-    */
 }
 
 bool intersect(Carre carre, Ray ray, Hit &hit){
@@ -401,7 +381,9 @@ int main( int agc, char **argv )
     Sphere sphere3{make_identity(), c, 0.75, make_color(0.0f,0.0f,1.0f)};
     //Carre carre1 = make_carre({-1.0f,1.0f,2.0f}, {-1.0f,0.0f,2.0f}, {0.0f,1.0f,2.0f}, make_color(1,0,0));
     //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,3.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
-    make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,3.0f},{0.0f,1.0f,2.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,3.0f},{0.0f,1.0f,1.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    make_damier({-1.5f,0.0f,1.0f},{-1.5f,-0.5f,4.0f},{1.5f,0.0f,1.0f},
+                9,9,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
     add(plan);
     add(sphere1);
     add(sphere2);
