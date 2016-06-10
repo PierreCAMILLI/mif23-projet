@@ -349,9 +349,9 @@ Color getCouleurIntersect(Ray r, Hit &hit){
             // Calcul de la normale
             Vector normale = make_vector(s.c, croix);
             // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
-            float coeff = -dot(normalize(r.direction),normalize(normale));
+            float coeff = fabs(dot(normalize(r.direction),normalize(normale)));
             // On créé la couleur
-            intersect_col = s.couleur*coeff;
+            intersect_col = s.couleur * coeff;
         }
     }
     // Obtention de la couleur pour contact avec un plan
@@ -359,7 +359,7 @@ Color getCouleurIntersect(Ray r, Hit &hit){
         Plan p = (*it);
         if(intersect(p, r, hit)){
             // Si le rayon est dans la distance de visionnage
-            float coeff = dot(normalize(r.direction),normalize(p.normal));
+            float coeff = fabs(dot(normalize(r.direction),normalize(p.normal)));
             intersect_col = p.couleur * coeff;
         }
     }
@@ -370,7 +370,7 @@ Color getCouleurIntersect(Ray r, Hit &hit){
             // Si le rayon est dans la distance de visionnage
             Triangle triangle = c.t1;
             Vector normal = cross(make_vector(triangle.p2, triangle.p1),make_vector(triangle.p3, triangle.p1));
-            float coeff = dot(normalize(r.direction),normalize(normal));
+            float coeff = fabs(dot(normalize(r.direction),normalize(normal)));
             intersect_col = triangle.couleur * coeff;
         }
     }
@@ -401,7 +401,7 @@ int main( int agc, char **argv )
     Sphere sphere3{make_identity(), c, 0.75, make_color(0.0f,0.0f,1.0f)};
     //Carre carre1 = make_carre({-1.0f,1.0f,2.0f}, {-1.0f,0.0f,2.0f}, {0.0f,1.0f,2.0f}, make_color(1,0,0));
     //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,3.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
-    make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,2.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,3.0f},{0.0f,1.0f,2.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
     add(plan);
     add(sphere1);
     add(sphere2);
