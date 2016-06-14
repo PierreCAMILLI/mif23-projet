@@ -12,7 +12,7 @@
 #include "orbiter.h"
 
 #define EPSILON 0.000001
-#define fois 10
+#define ALIASING_VALUE 2
 
 // Rayon
 struct Ray
@@ -214,6 +214,26 @@ bool intersect(Plan plan,Ray ray,Hit &hit)
     }
 }
 
+void translate(Point &p, Vector v){
+    p.x += v.x;
+    p.y += v.y;
+    p.z += v.z;
+}
+
+void translate(Carre &c, Vector v){
+    Triangle t = c.t1;
+    translate(t.p1,v);
+    translate(t.p2,v);
+    translate(t.p3,v);
+}
+
+void translate(Damier &d, Vector v){
+    for(std::vector<Carre>::iterator it = d.carres.begin(); it != d.carres.end(); it++){
+        translate((*it), v);
+    }
+    translate(d.plan.a,v);
+}
+
 // Indique si le rayon croise la sphère
 bool intersect(Sphere sphere,Ray ray,Hit &hit)
 {
@@ -247,22 +267,6 @@ float aire(Point A, Point B, Point C)
     float aABC = sqrtf(pABC*(pABC - AB)*(pABC - AC)*(pABC - BC));
     return aABC;
 }
-/*
-bool insideTriangle(Point p, Triangle triangle){
-    float pABC = aire(triangle.p1,triangle.p2,triangle.p3);
-    float pPAB = aire(triangle.p1,triangle.p2,p);
-    float pPBC = aire(p,triangle.p2,triangle.p3);
-    float pPAC = aire(triangle.p1,p,triangle.p3);
-    if(abs(pABC - (pPAB + pPBC + pPAC )) < 20){
-        std::cout << "Aire du triangle : " << pABC << std::endl;
-        std::cout << "Trois aires combiné : " << pPAB + pPBC + pPAC << std::endl;
-    }
-    if(pABC == pPAB + pPBC + pPAC)
-        return true;
-    else
-        return false;
-}
-*/
 
 bool intersect(Triangle triangle, Ray ray, Hit &hit){
 
@@ -435,10 +439,17 @@ int main( int agc, char **argv )
     //Carre carre1 = make_carre({-1.0f,1.0f,2.0f}, {-1.0f,0.0f,2.0f}, {0.0f,1.0f,2.0f}, make_color(1,0,0));
     //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,1.0f},{0.0f,1.0f,3.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
     //make_damier({-1.0f,1.0f,1.0f},{-1.0f,0.0f,3.0f},{0.0f,1.0f,1.0f},4,4,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    /*
     Damier damier1 = make_damier(   {-1.5f,1.0f,0.0f},  // Point en haut à gauche
                                     {-1.5f,-1.0f,9.5f}, // Point en bas à gauche
                                     {1.5f,1.0f,0.0f},   // Point en haut à droite
                 9,9,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    */
+    Damier damier1 = make_damier(   {-0.5f,0.3f,4.0f},  // Point en haut à gauche
+                                    {-0.5f,-0.3f,5.0f}, // Point en bas à gauche
+                                    {0.5f,0.3f,4.0f},   // Point en haut à droite
+                9,9,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
+    translate(damier1, {0,0.2,0});
     add(plan);
     add(sphere1);
     add(sphere2);
@@ -466,7 +477,7 @@ int main( int agc, char **argv )
           float r = 0;
           float g = 0;
           float b = 0;
-          for(int k = 0; k < fois; k++)
+          for(int k = 0; k < ALIASING_VALUE; k++)
           {
             float newX = RandomFloat(xmin, xmin+1);
             float newY = RandomFloat(ymin, ymin+1);
@@ -480,7 +491,7 @@ int main( int agc, char **argv )
             g+=intersectCol.g;
             b+=intersectCol.b;
           }
-          Color pix = make_color(r/(float)fois, g/(float)fois, b/(float)fois);
+          Color pix = make_color(r/(float)ALIASING_VALUE, g/(float)ALIASING_VALUE, b/(float)ALIASING_VALUE);
 
           image_set_pixel(image, x, y, pix);
       }
