@@ -16,12 +16,17 @@
 #define ALIASING_VALUE 2
 
 #define COEFF 0.1
+#define SPECULAR_REFLECTION 0.1
+#define DIFFUSE_REFLECTION 0.1
+#define AMBIENT_REFLECTION 0.1
+#define SHININESS 0.1
 
 // Rayon
 struct Ray
 {
     Point origin;
     Vector direction;
+    Color color;
 };
 
 // Impact
@@ -38,6 +43,15 @@ Ray make_ray( const Point& o, const Point& e )
     Ray r;
     r.origin= o;
     r.direction= make_vector(o, e);
+    r.color= make_color(0,0,0);
+    return r;
+}
+
+// Créé un rayon à partir de deux point dont un point d'origine
+Ray make_ray( const Point& o, const Point& e, Color c )
+{
+    Ray r = make_ray(o,e);
+    r.color= c;
     return r;
 }
 
@@ -121,6 +135,9 @@ std::vector<Carre> carres;
 // Vecteur de carrés
 std::vector<Damier> damiers;
 
+// Vecteur de rayons
+std::vector<Ray> rayons;
+
 // Ajoute un plan à la figure
 void add(Plan plan){
     plans.push_back(plan);
@@ -139,6 +156,11 @@ void add(Carre carre){
 // Ajoute un damier à la figure
 void add(Damier damier){
     damiers.push_back(damier);
+}
+
+// Ajoute un rayon à la figure
+void add(Ray r){
+    rayons.push_back(r);
 }
 
 // p2 et p3 représentent la diagonale du damier
@@ -341,7 +363,7 @@ bool intersect(Ray ray,Hit &hit){
 }
 
 // Retourne la couleur de l'objet touché par le rayon
-Color getCouleurIntersect(Ray r, Hit &hit, Color ray_color){
+Color getCouleurIntersect(Ray r, Hit &hit){
     hit.t = FLT_MAX;
     Color intersect_col = make_color(0,0,0);
     // Obtention de la couleur pour contact avec une sphère
@@ -359,7 +381,7 @@ Color getCouleurIntersect(Ray r, Hit &hit, Color ray_color){
             // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
             float coeff = fabs(dot(normalize(r.direction),normalize(normale)));
             // On créé la couleur
-            intersect_col = s.couleur * COEFF + s.couleur * ray_color * coeff;
+            intersect_col = s.couleur * COEFF + s.couleur * r.color * coeff;
 
 
             // Calcul du spéculaire
@@ -367,7 +389,7 @@ Color getCouleurIntersect(Ray r, Hit &hit, Color ray_color){
             // std::cout << mV.x << ", " << mV.y << ", " << mV.z << std::endl;
             Vector V = normalize(make_vector(r.origin, croix));
             float cof = dot(R,V);
-            Color specular = ray_color * powf(cof,8);
+            Color specular = r.color * powf(cof,8);
 
             intersect_col = intersect_col + specular;
         }
@@ -497,11 +519,10 @@ int main( int agc, char **argv )
             float newY = RandomFloat(ymin, ymin+(2*ALIASING_SPACE));
             Point o = d0 + newX*dx0 + newY*dy0;
             Point e = {0.0f, 0.0f, 5.0f};
-            Ray ray = make_ray(o, e);
-            Color ray_color = make_color(1.0,1.0,1.0);
+            Ray ray = make_ray(o, e, make_color(1.0,1.0,1.0));
 
             Hit hit;
-            Color intersectCol = getCouleurIntersect(ray, hit, ray_color);
+            Color intersectCol = getCouleurIntersect(ray, hit);
             r+=intersectCol.r;
             g+=intersectCol.g;
             b+=intersectCol.b;
