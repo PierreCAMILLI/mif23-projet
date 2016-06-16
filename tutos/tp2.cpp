@@ -12,7 +12,7 @@
 #include "orbiter.h"
 
 #define EPSILON 0.000001
-#define ALIASING_SPACE 0.1
+#define ALIASING_SPACE 0.05
 #define ALIASING_VALUE 2
 
 #define COEFF 0.1
@@ -282,6 +282,21 @@ bool intersect(Sphere sphere,Ray ray,Hit &hit)
         }
         return false;
     }
+    /*
+    Vector v= {ray.origin.x-sphere.c.x,ray.origin.y-sphere.c.y,ray.origin.z-sphere.c.z};
+    float t1 = -dot(v, ray.origin)
+    + sqrt(dot(v, ray.origin)*dot(v, ray.origin)
+    - ((v.x*v.x+v.y*v.y+v.z*v.z)-r)
+    * ((v.x*v.x+v.y*v.y+v.z*v.z)-r));
+    float t2 = -dot(v, ray.origin) - sqrt(dot(v, ray.origin)*dot(v, ray.origin) - ((v.x*v.x+v.y*v.y+v.z*v.z)-r) * ((v.x*v.x+v.y*v.y+v.z*v.z)-r));
+    ttemp = (t1 < t2) ? t1 : t2;
+    if(hit.t > ttemp){
+        hit.t = ttemp;
+        hit.n = ray.direction;
+        hit.p = ray.origin;
+        return true;
+    }
+    */
 }
 float aire(Point A, Point B, Point C)
 {
@@ -385,13 +400,19 @@ Color getCouleurIntersect(Ray r, Hit &hit){
 
 
             // Calcul du spéculaire
-            Vector R = 2 * dot(hit.n, normale) * hit.n - normale;
+            float dt = dot(hit.n, normale);
+            dt = (dt < 0 ? 0 : dt);
+            dt = (dt > 1 ? 1 : dt);
+            Vector R = 2 * fabs(dot(hit.n, normale)) * hit.n - normale;
             // std::cout << mV.x << ", " << mV.y << ", " << mV.z << std::endl;
             Vector V = normalize(make_vector(r.origin, croix));
-            float cof = dot(R,V);
+
+            float cof = fabs(dot(R,V));
             Color specular = r.color * powf(cof,8);
 
             intersect_col = intersect_col + specular;
+
+            //std::cout << hit.t << std::endl;
         }
     }
     // Obtention de la couleur pour contact avec un plan
@@ -400,7 +421,8 @@ Color getCouleurIntersect(Ray r, Hit &hit){
         if(intersect(p, r, hit)){
             // Si le rayon est dans la distance de visionnage
             float coeff = fabs(dot(normalize(r.direction),normalize(p.normal)));
-            intersect_col = p.couleur * coeff;
+            intersect_col = p.couleur * COEFF + p.couleur * r.color * coeff;
+            //std::cout << hit.t << std::endl;
         }
     }
     // Obtention de la couleur pour contact avec un carré
@@ -411,7 +433,7 @@ Color getCouleurIntersect(Ray r, Hit &hit){
             Triangle triangle = c.t1;
             Vector normal = cross(make_vector(triangle.p2, triangle.p1),make_vector(triangle.p3, triangle.p1));
             float coeff = fabs(dot(normalize(r.direction),normalize(normal)));
-            intersect_col = triangle.couleur * coeff;
+            intersect_col = triangle.couleur * COEFF + triangle.couleur  * r.color * coeff;
         }
     }
     // Obtention de la couleur pour contact avec un damier
@@ -433,7 +455,7 @@ Color getCouleurIntersect(Ray r, Hit &hit){
                 Triangle triangle = c.t1;
                 Vector normal = cross(make_vector(triangle.p2, triangle.p1),make_vector(triangle.p3, triangle.p1));
                 float coeff = fabs(dot(normalize(r.direction),normalize(normal)));
-                intersect_col = triangle.couleur * coeff;
+                intersect_col = triangle.couleur * COEFF + triangle.couleur  * r.color * coeff;
                 hit = thit;
                 break;
             }
@@ -519,7 +541,7 @@ int main( int agc, char **argv )
             float newY = RandomFloat(ymin, ymin+(2*ALIASING_SPACE));
             Point o = d0 + newX*dx0 + newY*dy0;
             Point e = {0.0f, 0.0f, 5.0f};
-            Ray ray = make_ray(o, e, make_color(1.0,1.0,1.0));
+            Ray ray = make_ray(o, e, make_color(1.0,0.0,1.0));
 
             Hit hit;
             Color intersectCol = getCouleurIntersect(ray, hit);
