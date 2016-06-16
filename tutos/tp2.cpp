@@ -12,7 +12,10 @@
 #include "orbiter.h"
 
 #define EPSILON 0.000001
+#define ALIASING_SPACE 0.1
 #define ALIASING_VALUE 2
+
+#define COEFF 0.1
 
 // Rayon
 struct Ray
@@ -338,7 +341,7 @@ bool intersect(Ray ray,Hit &hit){
 }
 
 // Retourne la couleur de l'objet touché par le rayon
-Color getCouleurIntersect(Ray r, Hit &hit){
+Color getCouleurIntersect(Ray r, Hit &hit, Color ray_color){
     hit.t = FLT_MAX;
     Color intersect_col = make_color(0,0,0);
     // Obtention de la couleur pour contact avec une sphère
@@ -356,7 +359,17 @@ Color getCouleurIntersect(Ray r, Hit &hit){
             // Calcul du cosinus de l'angle entre le rayon et la normal de la sphère
             float coeff = fabs(dot(normalize(r.direction),normalize(normale)));
             // On créé la couleur
-            intersect_col = s.couleur * coeff;
+            intersect_col = s.couleur * COEFF + s.couleur * ray_color * coeff;
+
+
+            // Calcul du spéculaire
+            Vector R = 2 * dot(hit.n, normale) * hit.n - normale;
+            // std::cout << mV.x << ", " << mV.y << ", " << mV.z << std::endl;
+            Vector V = normalize(make_vector(r.origin, croix));
+            float cof = dot(R,V);
+            Color specular = ray_color * powf(cof,8);
+
+            intersect_col = intersect_col + specular;
         }
     }
     // Obtention de la couleur pour contact avec un plan
@@ -449,7 +462,7 @@ int main( int agc, char **argv )
                                     {-0.5f,-0.3f,5.0f}, // Point en bas à gauche
                                     {0.5f,0.3f,4.0f},   // Point en haut à droite
                 9,9,make_color(1.0f,1.0f,1.0f),make_color(0.0f,0.0f,0.0f));
-    translate(damier1, {0,0.2,0});
+    //translate(damier1, {2,0.25,-0.1});
     add(plan);
     add(sphere1);
     add(sphere2);
@@ -472,21 +485,23 @@ int main( int agc, char **argv )
           */
 
           // generer l'origine et l'extremite du rayon
-          float xmin = x-0.5;
-          float ymin = y-0.5;
+
+          float xmin = x-ALIASING_SPACE;
+          float ymin = y-ALIASING_SPACE;
           float r = 0;
           float g = 0;
           float b = 0;
           for(int k = 0; k < ALIASING_VALUE; k++)
           {
-            float newX = RandomFloat(xmin, xmin+1);
-            float newY = RandomFloat(ymin, ymin+1);
+            float newX = RandomFloat(xmin, xmin+(2*ALIASING_SPACE));
+            float newY = RandomFloat(ymin, ymin+(2*ALIASING_SPACE));
             Point o = d0 + newX*dx0 + newY*dy0;
             Point e = {0.0f, 0.0f, 5.0f};
             Ray ray = make_ray(o, e);
+            Color ray_color = make_color(1.0,1.0,1.0);
 
             Hit hit;
-            Color intersectCol = getCouleurIntersect(ray, hit);
+            Color intersectCol = getCouleurIntersect(ray, hit, ray_color);
             r+=intersectCol.r;
             g+=intersectCol.g;
             b+=intersectCol.b;
